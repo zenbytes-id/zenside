@@ -1,0 +1,100 @@
+/* Git Commit Dialog */
+.git-commit-dialog {
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+}
+
+.git-commit-dialog .modal-body {
+  max-height: calc(80vh - 140px);
+  overflow-y: auto;
+}
+
+.commit-section {
+  margin-bottom: 20px;
+}
+
+.commit-section h3,
+.commit-section h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #cccccc;
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 11px;
+}
+
+.changed-files-list {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #3d3d3d;
+  border-radius: 4px;
+  background-color: #252525;
+}
+
+.no-changes {
+  padding: 20px;
+  text-align: center;
+  color: #858585;
+  font-size: 13px;
+}
+
+.changed-file-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #2d2d2d;
+  font-size: 12px;
+}
+
+.changed-file-item:last-child {
+  border-bottom: none;
+}
+
+.file-status {
+  flex-shrink: 0;
+  width: 20px;
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-weight: 600;
+  color: #00d4ff;
+}
+
+.file-path {
+  flex: 1;
+  color: #e4e4e4;
+  font-family: 'Monaco', 'Courier New', monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.commit-message-input {
+  width: 100%;
+  padding: 12px;
+  background-color: #1a1d23;
+  border: 1px solid #2d3139;
+  border-radius: 6px;
+  color: #e4e4e4;
+  font-size: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen';
+  resize: vertical;
+  min-height: 100px;
+  transition: border-color 0.2s;
+  line-height: 1.5;
+}
+
+.commit-message-input:focus {
+  outline: none;
+  border-color: #00d4ff;
+}
+
+.commit-message-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.commit-message-input::placeholder {
+  color: #6e6e6e;
+}

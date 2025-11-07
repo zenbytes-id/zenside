@@ -1,0 +1,107 @@
+/* Git History Dialog */
+.git-history-dialog {
+  max-width: 700px;
+  width: 90%;
+  max-height: 80vh;
+}
+
+.history-summary {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #ffa500;
+  font-weight: 500;
+}
+
+.history-loading,
+.no-commits {
+  padding: 40px 20px;
+  text-align: center;
+  color: #858585;
+  font-size: 14px;
+}
+
+.commits-list {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.commit-item {
+  padding: 12px;
+  border-bottom: 1px solid #2d2d2d;
+  transition: background-color 0.2s;
+  position: relative;
+}
+
+.commit-item.unpushed {
+  border-left: 3px solid #ffa500;
+  padding-left: 9px;
+}
+
+.commit-item.pushed {
+  border-left: 3px solid transparent;
+  padding-left: 9px;
+}
+
+.commit-item:hover {
+  background-color: #252525;
+}
+
+.commit-item:last-child {
+  border-bottom: none;
+}
+
+.commit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.commit-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.commit-hash {
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 12px;
+  color: #00d4ff;
+  font-weight: 600;
+  cursor: default;
+}
+
+.commit-time {
+  font-size: 11px;
+  color: #858585;
+}
+
+.commit-message {
+  font-size: 13px;
+  color: #e4e4e4;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.commit-author {
+  font-size: 11px;
+  color: #858585;
+}
+
+.commit-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.unpushed-badge {
+  background-color: rgba(255, 165, 0, 0.15);
+  color: #ffa500;
+  border: 1px solid rgba(255, 165, 0, 0.3);
+}

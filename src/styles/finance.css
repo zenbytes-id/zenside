@@ -1,0 +1,1846 @@
+/* Finance View Styles */
+
+/* App Mode Switcher */
+.app-mode-switcher {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+  background: #1a1d23;
+  border-bottom: 1px solid #2d3139;
+}
+
+.mode-tab {
+  flex: 1;
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #858585;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.mode-tab:hover {
+  background: #2d3139;
+  color: #cccccc;
+}
+
+.mode-tab.active {
+  background: #2d3139;
+  color: #00d4ff;
+  box-shadow: 0 0 0 1px #00d4ff33;
+}
+
+/* App Mode Swap Animations */
+.app-content-wrapper {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-mode-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  animation-duration: 0.3s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: both;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Swap out to the left (current view leaving) */
+@keyframes swapOutLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+}
+
+/* Swap in from right (new view entering) */
+@keyframes swapInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Swap out to the right (current view leaving) */
+@keyframes swapOutRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+}
+
+/* Swap in from left (new view entering) */
+@keyframes swapInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Animation classes */
+.swap-out-left {
+  animation-name: swapOutLeft;
+}
+
+.swap-in-right {
+  animation-name: swapInRight;
+}
+
+.swap-out-right {
+  animation-name: swapOutRight;
+}
+
+.swap-in-left {
+  animation-name: swapInLeft;
+}
+
+/* Finance View Layout - No scroll, just container */
+.finance-view {
+  flex: 1;
+  overflow: hidden; /* No scroll on main container */
+  padding: 12px 16px;
+  background: #1a1d23;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Ensure no margin on finance header titles */
+.finance-view h2,
+.finance-view h3 {
+  margin: 0;
+}
+
+/* Finance Add Transaction Button in Header - matching action-menu-trigger */
+.add-menu-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.btn-add-transaction {
+  background: none;
+  border: none;
+  color: #cccccc;
+  cursor: pointer;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  line-height: 0;
+}
+
+.btn-add-transaction:hover {
+  background-color: #2d3139;
+}
+
+/* Add Dropdown Menu */
+.add-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  background: #1a1d23;
+  border: 1px solid #2d3139;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  z-index: 100;
+  min-width: 180px;
+}
+
+.add-menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  color: #e4e4e4;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  text-align: left;
+}
+
+.add-menu-item:hover {
+  background-color: #2d3139;
+}
+
+.add-menu-item:not(:last-child) {
+  border-bottom: 1px solid #2d3139;
+}
+
+/* Search Bar */
+.search-bar {
+  padding: 12px 16px;
+  background: #1a1d23;
+  border-bottom: 1px solid #2d3139;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #2d3139;
+  border: 1px solid #3a3f4a;
+  border-radius: 8px;
+  padding: 8px 12px;
+  transition: all 0.2s;
+}
+
+.search-input-wrapper:focus-within {
+  border-color: #00d4ff;
+  background: #22262e;
+}
+
+.search-icon {
+  margin-right: 8px;
+  opacity: 0.6;
+  flex-shrink: 0;
+  color: #858585;
+}
+
+.search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #e4e4e4;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: #858585;
+}
+
+.search-clear {
+  background: none;
+  border: none;
+  color: #858585;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 0;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-clear:hover {
+  color: #e4e4e4;
+}
+
+.btn-filter {
+  position: relative;
+  background: none;
+  border: none;
+  color: #858585;
+  cursor: pointer;
+  padding: 0 8px;
+  margin-left: 4px;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.btn-filter:hover {
+  color: #e4e4e4;
+}
+
+.filter-badge {
+  position: absolute;
+  top: -4px;
+  right: 2px;
+  background: #00d4ff;
+  color: #1e1e1e;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: 10px;
+  line-height: 1;
+  min-width: 16px;
+  text-align: center;
+}
+
+/* Filters */
+.filters {
+  margin-top: 12px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #858585;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.filter-btn {
+  padding: 6px 12px;
+  background: #2d3139;
+  border: 1px solid #3a3f4a;
+  border-radius: 6px;
+  color: #858585;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover {
+  background: #3a3f4a;
+  color: #cccccc;
+}
+
+.filter-btn.active {
+  background: #00d4ff;
+  border-color: #00d4ff;
+  color: #1e1e1e;
+}
+
+/* Summary Widget */
+.finance-summary {
+  margin-bottom: 24px;
+}
+
+.summary-card {
+  background: #1e2127; /* Darker card to contrast with brighter background */
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #2d3139;
+  margin-bottom: 12px;
+}
+
+.summary-card.total-balance {
+  background: linear-gradient(135deg, #00d4ff 0%, #00bfea 100%);
+  color: #1e1e1e;
+  border: none;
+}
+
+/* Monthly Stats Table */
+.monthly-stats {
+  background: #1e2127; /* Darker card to contrast with brighter background */
+  border: 1px solid #2d3139;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #2d3139;
+  transition: background 0.2s;
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}
+
+.stat-row:hover {
+  background: #22262e;
+}
+
+.stat-row.highlight {
+  background: #22262e;
+  border-top: 2px solid #2d3139;
+}
+
+/* Total Balance Row - Special styling */
+.stat-row.total-balance-row {
+  background: linear-gradient(135deg, #00d4ff 0%, #00bfea 100%);
+  padding: 16px;
+}
+
+.stat-row.total-balance-row .stat-label {
+  color: rgba(30, 30, 30, 0.8);
+  font-size: 12px;
+}
+
+.stat-row.total-balance-row .stat-value.total-balance-value {
+  color: #1e1e1e;
+  font-size: 28px;
+}
+
+/* Expandable Toggle Row */
+.stat-row.expandable-toggle-row {
+  user-select: none;
+  background: #22262e;
+}
+
+.stat-row.expandable-toggle-row:hover {
+  background: #2a2f38;
+}
+
+.expand-icon {
+  color: #858585;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.stat-row.expandable-toggle-row:hover .expand-icon {
+  color: #00d4ff;
+}
+
+/* Expandable Content */
+.expandable-content {
+  animation: expandIn 0.3s ease-out;
+  overflow: hidden;
+}
+
+.expandable-content .stat-row {
+  border-top: 1px solid #2d3139;
+}
+
+.expandable-content .stat-row:first-child {
+  border-top: none;
+}
+
+@keyframes expandIn {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+.stat-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #858585;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.stat-value.income {
+  color: #00d4ff;
+}
+
+.stat-value.expense {
+  color: #ff6b6b;
+}
+
+.summary-label {
+  font-size: 12px;
+  opacity: 0.9;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.summary-value {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.summary-card.total-balance .summary-value {
+  font-size: 28px;
+}
+
+.summary-value.positive {
+  color: #00d4ff;
+}
+
+.summary-value.negative {
+  color: #ff6b6b;
+}
+
+/* Pockets Section */
+.pockets-section {
+  margin-bottom: 24px;
+}
+
+.pockets-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 8px;
+}
+
+.pockets-section h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #e4e4e4;
+  text-transform: none;
+}
+
+.btn-manage-pockets {
+  padding: 6px;
+  border: none;
+  background: #2d3139;
+  color: #858585;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-manage-pockets:hover {
+  background: #363a44;
+  color: #00d4ff;
+}
+
+.pockets-list {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 8px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar but keep functionality */
+.pockets-list::-webkit-scrollbar {
+  height: 6px;
+}
+
+.pockets-list::-webkit-scrollbar-track {
+  background: #1a1d23;
+  border-radius: 3px;
+}
+
+.pockets-list::-webkit-scrollbar-thumb {
+  background: #2d3139;
+  border-radius: 3px;
+}
+
+.pockets-list::-webkit-scrollbar-thumb:hover {
+  background: #3d4149;
+}
+
+.pocket-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #1e2127; /* Darker card to contrast with brighter background */
+  border: 1px solid #2d3139;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 200px;
+  flex-shrink: 0;
+}
+
+.pocket-card:hover {
+  background: #22262e;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.pocket-card .btn-delete-pocket {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  background: #ff6b6b;
+  border: none;
+  border-radius: 0 12px 0 6px;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.pocket-card:hover .btn-delete-pocket {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.pocket-card .btn-delete-pocket:hover {
+  background: #ff5252;
+  transform: scale(1.15);
+}
+
+.pocket-icon {
+  font-size: 32px;
+}
+
+.pocket-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.pocket-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e4e4e4;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pocket-balance {
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+  /* Color set via inline style from pocket.color */
+}
+
+.btn-add-pocket {
+  width: 100%;
+  padding: 12px;
+  background: #1a1d23;
+  color: #00d4ff;
+  border: 2px dashed #00d4ff55;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-add-pocket:hover {
+  background: #22262e;
+  border-color: #00d4ff;
+}
+
+/* Transactions Section */
+.transactions-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Important for flex child scrolling */
+  margin-bottom: 120px; /* Space for git menu at bottom and transaction info */
+}
+
+.transactions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 8px;
+}
+
+.transactions-section h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #e4e4e4;
+  text-transform: none;
+}
+
+.btn-add-transaction-quick {
+  padding: 6px;
+  border: none;
+  background: #2d3139;
+  color: #858585;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-add-transaction-quick:hover {
+  background: #363a44;
+  color: #00d4ff;
+}
+
+.transactions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 6px;
+  scroll-behavior: smooth;
+  min-height: 0; /* Important for flex child scrolling */
+}
+
+/* Scrollbar styling for transactions list with auto-hide */
+.transactions-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.transactions-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.transactions-list::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 5px;
+  transition: background 0.3s ease;
+}
+
+.transactions-list.scrolling::-webkit-scrollbar-thumb {
+  background: #2d3139;
+}
+
+.transactions-list.scrolling::-webkit-scrollbar-thumb:hover {
+  background: #3d4149;
+}
+
+.btn-load-more {
+  margin-top: 12px;
+  padding: 12px 24px;
+  background: #2d3139;
+  border: 1px solid #3d4149;
+  border-radius: 8px;
+  color: #00d4ff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-load-more:hover:not(:disabled) {
+  background: #3d4149;
+  border-color: #00d4ff;
+  transform: translateY(-1px);
+}
+
+.btn-load-more:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.transactions-info {
+  margin-top: 12px;
+  margin-bottom: 20px;
+  padding: 8px 12px;
+  background: #1e2127; /* Darker card to contrast with brighter background */
+  border: 1px solid #2d3139;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.transactions-info small {
+  color: #858585;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #1e2127; /* Darker card to contrast with brighter background */
+  border: 1px solid #2d3139;
+  border-radius: 12px;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.transaction-item:hover {
+  background: #22262e;
+  border-color: #00d4ff22;
+}
+
+.btn-delete-transaction {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  background: #ff6b6b;
+  border: none;
+  border-radius: 0 12px 0 6px;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.transaction-item:hover .btn-delete-transaction {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.btn-delete-transaction:hover {
+  background: #ff5252;
+  transform: scale(1.15);
+}
+
+.transaction-icon {
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: #2d3139;
+}
+
+.transaction-item.income .transaction-icon {
+  background: #00d4ff22;
+}
+
+.transaction-item.expense .transaction-icon {
+  background: #ff6b6b22;
+}
+
+.transaction-item.transfer .transaction-icon {
+  background: #85858533;
+}
+
+.transaction-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.transaction-description {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e4e4e4;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.transaction-details {
+  font-size: 12px;
+  color: #858585;
+}
+
+.transaction-amount {
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.transaction-amount.income {
+  color: #00d4ff;
+}
+
+.transaction-amount.expense {
+  color: #ff6b6b;
+}
+
+.transaction-amount.transfer {
+  color: #858585;
+}
+
+/* Empty States */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #858585;
+}
+
+.empty-state p {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+}
+
+.btn-create-first {
+  padding: 10px 20px;
+  background: #00d4ff;
+  color: #1e1e1e;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-create-first:hover {
+  background: #00bfea;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 212, 255, 0.3);
+}
+
+/* Loading State */
+.loading-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #858585;
+  font-size: 14px;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Modal Loading State */
+.modal-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  gap: 16px;
+}
+
+.modal-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #2d3139;
+  border-top-color: #00d4ff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.modal-loading-text {
+  color: #858585;
+  font-size: 14px;
+}
+
+.modal-content {
+  background: #1a1d23;
+  border: 1px solid #2d3139;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 400px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #2d3139;
+  flex-shrink: 0;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #e4e4e4;
+}
+
+.btn-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #2d3139;
+  border-radius: 50%;
+  font-size: 20px;
+  color: #858585;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-close:hover {
+  background: #3a3f4a;
+  color: #e4e4e4;
+}
+
+.modal-body {
+  padding: 20px;
+  color: #e4e4e4;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #e4e4e4;
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  padding: 10px 12px;
+  background: #2d3139;
+  border: 1px solid #3a3f4a;
+  border-radius: 8px;
+  color: #e4e4e4;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #00d4ff;
+  background: #22262e;
+}
+
+.form-input::placeholder {
+  color: #858585;
+}
+
+.form-select {
+  cursor: pointer;
+}
+
+.form-select option {
+  background: #2d3139;
+  color: #e4e4e4;
+}
+
+/* Transaction Type Selector */
+.transaction-type-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.type-btn {
+  padding: 10px;
+  background: #2d3139;
+  border: 1px solid #3a3f4a;
+  border-radius: 8px;
+  color: #858585;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.type-btn:hover {
+  background: #3a3f4a;
+  color: #cccccc;
+}
+
+.type-btn.active {
+  border-color: #00d4ff;
+  color: #00d4ff;
+}
+
+.type-btn.active.income {
+  border-color: #00d4ff;
+  background: #00d4ff11;
+}
+
+.type-btn.active.expense {
+  border-color: #ff6b6b;
+  background: #ff6b6b11;
+  color: #ff6b6b;
+}
+
+.type-btn.active.transfer {
+  border-color: #858585;
+  background: #85858511;
+  color: #cccccc;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #2d3139;
+}
+
+.btn-primary,
+.btn-secondary {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: #00d4ff;
+  color: #1e1e1e;
+}
+
+.btn-primary:hover {
+  background: #00bfea;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 212, 255, 0.3);
+}
+
+.btn-secondary {
+  background: #2d3139;
+  color: #e4e4e4;
+}
+
+.btn-secondary:hover {
+  background: #3a3f4a;
+}
+
+/* Pocket Dialog Specific Styles */
+.form-hint {
+  font-size: 11px;
+  color: #858585;
+  margin-top: 4px;
+}
+
+.icon-picker {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+
+.icon-option {
+  aspect-ratio: 1;
+  background: #2d3139;
+  border: 2px solid #3a3f4a;
+  border-radius: 8px;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.icon-option:hover {
+  background: #3a3f4a;
+  border-color: #858585;
+}
+
+.icon-option.active {
+  background: #00d4ff22;
+  border-color: #00d4ff;
+  box-shadow: 0 0 0 2px #00d4ff33;
+}
+
+.color-picker {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+
+.color-option {
+  aspect-ratio: 1;
+  border: 2px solid #3a3f4a;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.color-option:hover {
+  border-color: #858585;
+  transform: scale(1.05);
+}
+
+.color-option.active {
+  border-color: #00d4ff;
+  box-shadow: 0 0 0 2px #00d4ff33;
+  transform: scale(1.1);
+}
+
+.color-option.active::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 20px;
+  font-weight: bold;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+}
+
+.pocket-preview {
+  background: #1e1e1e;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #2d3139;
+}
+
+.pocket-card.preview {
+  cursor: default;
+  border: 1px solid #00d4ff33;
+  background: #1a1d23;
+}
+
+.pocket-card.preview:hover {
+  transform: none;
+  border-color: #00d4ff33;
+}
+
+/* Filter Modal Additions */
+.filter-info-banner {
+  padding: 12px;
+  background: #00d4ff11;
+  border: 1px solid #00d4ff33;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.filter-info-banner small {
+  color: #e4e4e4;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.filter-info-banner strong {
+  color: #00d4ff;
+}
+
+.filter-hint {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #ff6b6b11;
+  border: 1px solid #ff6b6b33;
+  border-radius: 6px;
+}
+
+.filter-hint small {
+  color: #ff6b6b;
+  font-size: 12px;
+}
+
+.filter-load-more-section {
+  margin-top: 16px;
+  padding-top: 16px;
+}
+
+.filter-load-more-section .divider {
+  height: 1px;
+  background: #2d3139;
+  margin-bottom: 16px;
+}
+
+.btn-filter-load-more {
+  width: 100%;
+  padding: 12px 16px;
+  background: #00d4ff11;
+  border: 1px solid #00d4ff33;
+  border-radius: 8px;
+  color: #00d4ff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 8px;
+}
+
+.btn-filter-load-more:hover:not(:disabled) {
+  background: #00d4ff22;
+  border-color: #00d4ff;
+  transform: translateY(-1px);
+}
+
+.btn-filter-load-more:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.filter-load-more-section .helper-text {
+  display: block;
+  text-align: center;
+  color: #858585;
+  font-size: 12px;
+}
+
+/* Manage Pockets Modal */
+.manage-pockets-modal {
+  max-width: 480px;
+  width: 90%;
+}
+
+.manage-pockets-hint {
+  background: #2d3139;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.manage-pockets-hint p {
+  margin: 0;
+  font-size: 13px;
+  color: #858585;
+  text-align: center;
+}
+
+.manage-pockets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.manage-pocket-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #2d3139;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: grab;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.manage-pocket-item:hover {
+  background: #363a44;
+  border-color: #3a3f4a;
+}
+
+.manage-pocket-item.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+  transform: scale(0.98);
+}
+
+.manage-pocket-item.drag-over {
+  border-color: #00d4ff;
+  background: #00d4ff11;
+  transform: translateY(-2px);
+}
+
+.drag-handle {
+  color: #858585;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+.manage-pocket-item:hover .drag-handle {
+  color: #cccccc;
+}
+
+.manage-pocket-item.dragging .drag-handle {
+  cursor: grabbing;
+}
+
+.pocket-icon-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.pocket-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.pocket-details .pocket-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e4e4e4;
+  margin-bottom: 2px;
+}
+
+.pocket-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.default-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #00d4ff22;
+  color: #00d4ff;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.order-number {
+  font-size: 14px;
+  font-weight: 700;
+  color: #858585;
+  min-width: 32px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Expense Chart Dialog Styles */
+.expense-chart-modal {
+  max-width: 650px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.period-selector {
+  margin-bottom: 24px;
+}
+
+.period-buttons {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.period-btn {
+  flex: 1;
+  padding: 10px 16px;
+  background: #2d3139;
+  border: 1px solid #3d4149;
+  border-radius: 8px;
+  color: #858585;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.period-btn:hover {
+  background: #3d4149;
+  color: #cccccc;
+}
+
+.period-btn.active {
+  background: #00d4ff22;
+  border-color: #00d4ff;
+  color: #00d4ff;
+}
+
+.month-picker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 12px;
+  background: #2d3139;
+  border-radius: 8px;
+}
+
+.btn-month-nav {
+  background: transparent;
+  border: 1px solid #3d4149;
+  border-radius: 6px;
+  padding: 8px;
+  color: #858585;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-month-nav:hover:not(:disabled) {
+  background: #3d4149;
+  color: #00d4ff;
+  border-color: #00d4ff;
+}
+
+.btn-month-nav:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.selected-month {
+  flex: 1;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #e4e4e4;
+}
+
+.chart-loading {
+  padding: 60px 20px;
+  text-align: center;
+  color: #858585;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #2d3139 0%, #1a1d23 100%);
+  border-radius: 12px;
+  border: 1px solid #3d4149;
+}
+
+.chart-period {
+  font-size: 16px;
+  font-weight: 600;
+  color: #e4e4e4;
+}
+
+.chart-total {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.total-label {
+  font-size: 11px;
+  color: #858585;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.total-amount {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ff6b6b;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-container {
+  position: relative;
+  margin: 24px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.chart-center-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.center-label-count {
+  font-size: 36px;
+  font-weight: 700;
+  color: #e4e4e4;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.center-label-text {
+  font-size: 12px;
+  color: #858585;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Custom Recharts Tooltip */
+.chart-tooltip {
+  background: #2d3139;
+  border: 1px solid #3d4149;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  animation: tooltipFadeIn 0.2s ease-out forwards;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.tooltip-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.tooltip-icon {
+  font-size: 20px;
+}
+
+.tooltip-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e4e4e4;
+}
+
+.tooltip-amount {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ff6b6b;
+  margin-bottom: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.tooltip-percentage {
+  font-size: 13px;
+  color: #858585;
+}
+
+/* Chart Legend */
+.chart-legend {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #3d4149;
+}
+
+.chart-legend h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e4e4e4;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.legend-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* Scrollbar styling for legend items */
+.legend-items::-webkit-scrollbar {
+  width: 6px;
+}
+
+.legend-items::-webkit-scrollbar-track {
+  background: #1a1d23;
+  border-radius: 3px;
+}
+
+.legend-items::-webkit-scrollbar-thumb {
+  background: #2d3139;
+  border-radius: 3px;
+}
+
+.legend-items::-webkit-scrollbar-thumb:hover {
+  background: #3d4149;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: #2d3139;
+  border-radius: 8px;
+  border: 1px solid #3d4149;
+  transition: all 0.2s;
+}
+
+.legend-item:hover,
+.legend-item.active {
+  background: #3d4149;
+  border-color: #4d5159;
+  transform: translateX(2px);
+  cursor: pointer;
+}
+
+.legend-item.active {
+  border-color: #00d4ff;
+  box-shadow: 0 0 0 1px #00d4ff33;
+}
+
+.legend-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.legend-rank {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #858585;
+  background: #1a1d23;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.legend-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px #1a1d2344;
+}
+
+.legend-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.legend-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #e4e4e4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.legend-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.legend-amount {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ff6b6b;
+  font-variant-numeric: tabular-nums;
+  min-width: 80px;
+  text-align: right;
+}
+
+.legend-percentage {
+  font-size: 13px;
+  font-weight: 700;
+  color: #00d4ff;
+  min-width: 45px;
+  text-align: right;
+  background: #00d4ff11;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* View Chart Button in Summary */
+.stat-row.chart-action {
+  border-top: 1px solid #2d3139;
+  padding-top: 12px;
+  margin-top: 8px;
+}
+
+.btn-view-chart {
+  width: 100%;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #00d4ff22 0%, #00d4ff11 100%);
+  border: 1px solid #00d4ff44;
+  border-radius: 8px;
+  color: #00d4ff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn-view-chart:hover {
+  background: linear-gradient(135deg, #00d4ff33 0%, #00d4ff22 100%);
+  border-color: #00d4ff;
+  transform: translateY(-1px);
+}
+
+.btn-view-chart:active {
+  transform: translateY(0);
+}

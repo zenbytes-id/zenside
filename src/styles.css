@@ -1,0 +1,22 @@
+/*
+ * SideNotes - Main Stylesheet
+ * Modular CSS architecture for better maintainability
+ */
+
+/* Base styles - Global resets and common utilities */
+@import './styles/base.css';
+
+/* Component styles */
+@import './styles/header.css';
+@import './styles/folders.css';
+@import './styles/notes.css';
+@import './styles/editor.css';
+@import './styles/markdown.css';
+@import './styles/modal.css';
+@import './styles/search.css';
+
+/* UI Utilities */
+@import './styles/scrollbar.css';
+
+/* Responsive design for smaller screens (MacBook Air, MacBook Pro 14", etc.) */
+@import './styles/responsive.css';

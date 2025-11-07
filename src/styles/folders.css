@@ -1,0 +1,139 @@
+/* Folder List */
+.folder-list {
+  padding: 4px 0px 4px 10px; /* Further reduced padding, balanced for scrollbar gutter */
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
+  min-height: 0;
+  /* scrollbar-gutter: stable; */ /* DISABLED: Not supported in Safari/Firefox - causes layout issues */
+  /* Add padding-right as fallback for consistent spacing */
+  padding-right: 6px;
+}
+
+/* Scrollbar styling for folder-list with auto-hide */
+.folder-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.folder-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.folder-list::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 5px;
+  transition: background 0.3s ease;
+}
+
+.folder-list.scrolling::-webkit-scrollbar-thumb {
+  background: #2d3139;
+}
+
+.folder-list.scrolling::-webkit-scrollbar-thumb:hover {
+  background: #3d4149;
+}
+
+.folder-item {
+  padding: 12px;
+  margin-bottom: 4px;
+  background-color: #252830;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: background-color 0.2s;
+  border: 1px solid transparent;
+}
+
+.folder-item:hover {
+  background-color: #2d323d;
+}
+
+.folder-item.editing {
+  background-color: #2d323d;
+  cursor: default;
+}
+
+.folder-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.folder-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #e4e4e4;
+  cursor: text;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  border-radius: 3px;
+  transition: background-color 0.15s;
+  display: inline-block;
+}
+
+.folder-name:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.folder-spacer {
+  flex: 1;
+}
+
+.folder-name-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #e4e4e4;
+  font-size: 16px;
+  font-weight: 500;
+  outline: none;
+  padding: 0;
+  font-family: inherit;
+}
+
+.folder-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.folder-count {
+  font-size: 14px;
+  color: #858585;
+  background-color: #3a3f4b;
+  padding: 2px 10px;
+  border-radius: 12px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.btn-delete-folder {
+  background: none;
+  border: none;
+  color: #858585;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  transition: background-color 0.2s, color 0.2s;
+  flex-shrink: 0;
+}
+
+.folder-item:hover .btn-delete-folder {
+  display: flex;
+}
+
+.btn-delete-folder:hover {
+  background-color: #5a5a5a;
+  color: #ffffff;
+}
+
+.notes-section {
+  margin-top: 16px;
+}

@@ -1,0 +1,129 @@
+/* Modal */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background-color: #252830;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  border: 1px solid #2d3139;
+}
+
+.modal-header {
+  padding: 20px;
+  border-bottom: 1px solid #2d3139;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #e4e4e4;
+  margin: 0;
+}
+
+.btn-modal-close {
+  background: none;
+  border: none;
+  color: #858585;
+  font-size: 28px;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s, color 0.2s;
+  line-height: 1;
+}
+
+.btn-modal-close:hover {
+  background-color: #2d3139;
+  color: #cccccc;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.modal-input {
+  width: 100%;
+  background-color: #1a1d23;
+  border: 1px solid #2d3139;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 14px;
+  color: #e4e4e4;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.modal-input:focus {
+  border-color: #00d4ff;
+}
+
+.modal-input::placeholder {
+  color: #6e6e6e;
+}
+
+.modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #2d3139;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-cancel {
+  background: none;
+  border: 1px solid #3a3f4b;
+  color: #cccccc;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.btn-cancel:hover {
+  background-color: #2d3139;
+  border-color: #4a4f5b;
+}
+
+.btn-create {
+  background-color: #00d4ff;
+  color: #1a1d23;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-create:hover:not(:disabled) {
+  background-color: #00bde6;
+}
+
+.btn-create:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
