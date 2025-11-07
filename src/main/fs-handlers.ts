@@ -24,6 +24,14 @@ export function registerFilesystemHandlers(): void {
     try {
       await filesystemSync.setSyncDirectory(directoryPath, true);
       console.log('[FS-HANDLER] Sync directory set successfully');
+
+      // Notify all windows to reload
+      BrowserWindow.getAllWindows().forEach(win => {
+        if (!win.isDestroyed()) {
+          win.webContents.send('fs:syncDirectoryChanged', { directory: directoryPath });
+        }
+      });
+
       return { success: true, path: directoryPath };
     } catch (error) {
       console.error('[FS-HANDLER] Error setting sync directory:', error);
@@ -192,6 +200,25 @@ export function registerFilesystemHandlers(): void {
   // Check if sync is enabled
   ipcMain.handle('fs:isSyncEnabled', async () => {
     return filesystemSync.isSyncEnabled();
+  });
+
+  // Clear sync directory
+  ipcMain.handle('fs:clearSyncDirectory', async () => {
+    try {
+      await filesystemSync.clearSyncDirectory();
+
+      // Notify all windows to reload
+      BrowserWindow.getAllWindows().forEach(win => {
+        if (!win.isDestroyed()) {
+          win.webContents.send('fs:syncDirectoryCleared');
+        }
+      });
+
+      return { success: true };
+    } catch (error) {
+      console.error('[FS-HANDLER] Error clearing sync directory:', error);
+      return { success: false, error: (error as Error).message };
+    }
   });
 
   // Get default sync directory path

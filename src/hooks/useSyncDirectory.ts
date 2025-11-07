@@ -29,11 +29,15 @@ export const useSyncDirectory = () => {
         window.electronAPI.fs.isSyncEnabled()
       ]);
 
+      console.log('[HOOK] Loaded sync state - directory:', directory, 'enabled:', enabled);
+
       setSyncState({
         enabled: enabled || false,
         directory: directory || null,
         status: 'idle'
       });
+
+      console.log('[HOOK] Set sync state - directory:', directory || null, 'enabled:', enabled || false);
     } catch (error) {
       console.error('Failed to load sync state:', error);
     }

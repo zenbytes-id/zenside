@@ -68,7 +68,8 @@ const App: React.FC = () => {
 
   useEffect(() => {
     // ONLY load from filesystem, no localStorage!
-    if (syncState.enabled) {
+    console.log('[APP] useEffect triggered - syncState:', syncState);
+    if (syncState.enabled && syncState.directory) {
       console.log('[APP] Loading notes from filesystem...');
       // Load notes from filesystem
       loadNotesFromDisk().then((diskNotes) => {
@@ -112,6 +113,13 @@ const App: React.FC = () => {
         console.log('[APP] Loaded folders from disk:', diskFolders.length);
         setFolders(diskFolders);
       });
+    } else {
+      // Clear notes and folders when sync is disabled or no directory is set
+      console.log('[APP] No sync directory - clearing notes and folders');
+      setNotes([]);
+      setFolders([]);
+      setSelectedNote(null);
+      setSelectedFolder(null);
     }
 
     // Listen for notes loaded from filesystem sync
@@ -143,7 +151,7 @@ const App: React.FC = () => {
     return () => {
       window.removeEventListener('sync:notesLoaded', handleNotesLoaded as EventListener);
     };
-  }, [syncState.enabled, loadNotesFromDisk, loadFoldersFromDisk, saveNoteToFS]);
+  }, [syncState.enabled, syncState.directory, loadNotesFromDisk, loadFoldersFromDisk, saveNoteToFS]);
 
   useEffect(() => {
     // Close action menu when clicking outside
@@ -159,6 +167,30 @@ const App: React.FC = () => {
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
   }, [showActionMenu]);
+
+  // Listen for sync directory cleared event
+  useEffect(() => {
+    const handleSyncDirectoryCleared = () => {
+      console.log('[APP] Sync directory cleared - reloading app');
+      window.location.reload();
+    };
+
+    if (window.electronAPI?.onSyncDirectoryCleared) {
+      window.electronAPI.onSyncDirectoryCleared(handleSyncDirectoryCleared);
+    }
+  }, []);
+
+  // Listen for sync directory changed event
+  useEffect(() => {
+    const handleSyncDirectoryChanged = (data: { directory: string }) => {
+      console.log('[APP] Sync directory changed to:', data.directory, '- reloading app');
+      window.location.reload();
+    };
+
+    if (window.electronAPI?.onSyncDirectoryChanged) {
+      window.electronAPI.onSyncDirectoryChanged(handleSyncDirectoryChanged);
+    }
+  }, []);
 
   // Listen for search keyboard shortcut from main process
   useEffect(() => {
@@ -730,80 +762,110 @@ const App: React.FC = () => {
               }
             }}
           >
-            {getCurrentFolders().map((folder) => {
-              const countSubfolders = folders.filter(f => f.parentId === folder.id).length;
-              const countNotes = getNotesInFolder(folder.id).length;
-              const totalCount = countSubfolders + countNotes;
-              const isEditing = editingFolderId === folder.id;
-
-              return (
-                <div
-                  key={folder.id}
-                  className={`folder-item ${isEditing ? 'editing' : ''}`}
-                  onClick={() => !isEditing && handleFolderClick(folder)}
-                >
-                  <span className="folder-icon" style={{ color: folder.color }}>📁</span>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      className="folder-name-input"
-                      value={folder.name}
-                      onChange={(e) => handleFolderNameChange(folder.id, e.target.value)}
-                      onBlur={() => handleFolderNameSubmit(folder.id)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleFolderNameSubmit(folder.id);
-                        } else if (e.key === 'Escape') {
-                          handleCancelFolderEdit(folder.id);
-                        }
-                      }}
-                      autoFocus
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  ) : (
-                    <>
-                      <span
-                        className="folder-name"
-                        onClick={(e) => handleFolderNameClick(folder.id, e)}
-                        title="Click to rename"
-                      >
-                        {folder.name}
-                      </span>
-                      <span className="folder-spacer"></span>
-                      <div className="folder-actions">
-                        <span className="folder-count">{totalCount}</span>
-                        <button
-                          className="btn-delete-folder"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteFolder(folder.id);
-                          }}
-                          title="Delete folder"
-                        >
-                          ×
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </div>
-              );
-            })}
-
-            {/* Show notes in current folder if any */}
-            {getNotesInFolder(selectedFolder?.id).length > 0 && (
-              <div className="notes-section">
-                <div className="section-divider">Notes</div>
-                <NoteList
-                  notes={getNotesInFolder(selectedFolder?.id)}
-                  folders={folders}
-                  selectedNote={selectedNote}
-                  highlightedNoteId={highlightedNoteId}
-                  onSelectNote={handleNoteClick}
-                  onHighlightNote={handleNoteHighlight}
-                  onDeleteNote={deleteNote}
-                  onUpdateNote={updateNote}
-                />
+            {getCurrentFolders().length === 0 &&
+             getNotesInFolder(selectedFolder?.id).length === 0 ? (
+              <div className="empty-state">
+                {!syncState.directory ? (
+                  <>
+                    <div className="empty-state-icon">📁</div>
+                    <p className="empty-state-title">Choose Directory First</p>
+                    <p className="empty-state-description">
+                      Please select a sync directory in Settings to start creating notes
+                    </p>
+                    <button
+                      onClick={() => window.electronAPI?.openSettings()}
+                      className="btn-create-first"
+                    >
+                      Open Settings
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <p>{folderPath.length > 0 ? 'This folder is empty' : 'No folders yet'}</p>
+                    <button onClick={createNewNote} className="btn-create-first">
+                      Create your first note
+                    </button>
+                  </>
+                )}
               </div>
+            ) : (
+              <>
+                {getCurrentFolders().map((folder) => {
+                  const countSubfolders = folders.filter(f => f.parentId === folder.id).length;
+                  const countNotes = getNotesInFolder(folder.id).length;
+                  const totalCount = countSubfolders + countNotes;
+                  const isEditing = editingFolderId === folder.id;
+
+                  return (
+                    <div
+                      key={folder.id}
+                      className={`folder-item ${isEditing ? 'editing' : ''}`}
+                      onClick={() => !isEditing && handleFolderClick(folder)}
+                    >
+                      <span className="folder-icon" style={{ color: folder.color }}>📁</span>
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          className="folder-name-input"
+                          value={folder.name}
+                          onChange={(e) => handleFolderNameChange(folder.id, e.target.value)}
+                          onBlur={() => handleFolderNameSubmit(folder.id)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              handleFolderNameSubmit(folder.id);
+                            } else if (e.key === 'Escape') {
+                              handleCancelFolderEdit(folder.id);
+                            }
+                          }}
+                          autoFocus
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      ) : (
+                        <>
+                          <span
+                            className="folder-name"
+                            onClick={(e) => handleFolderNameClick(folder.id, e)}
+                            title="Click to rename"
+                          >
+                            {folder.name}
+                          </span>
+                          <span className="folder-spacer"></span>
+                          <div className="folder-actions">
+                            <span className="folder-count">{totalCount}</span>
+                            <button
+                              className="btn-delete-folder"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteFolder(folder.id);
+                              }}
+                              title="Delete folder"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {/* Show notes in current folder if any */}
+                {getNotesInFolder(selectedFolder?.id).length > 0 && (
+                  <div className="notes-section">
+                    <div className="section-divider">Notes</div>
+                    <NoteList
+                      notes={getNotesInFolder(selectedFolder?.id)}
+                      folders={folders}
+                      selectedNote={selectedNote}
+                      highlightedNoteId={highlightedNoteId}
+                      onSelectNote={handleNoteClick}
+                      onHighlightNote={handleNoteHighlight}
+                      onDeleteNote={deleteNote}
+                      onUpdateNote={updateNote}
+                    />
+                  </div>
+                )}
+              </>
             )}
           </div>
         ) : viewMode === 'notes' ? (
@@ -820,34 +882,6 @@ const App: React.FC = () => {
         ) : viewMode === 'editor' && selectedNote ? (
           <NoteEditor note={selectedNote} onUpdateNote={updateNote} />
         ) : null}
-
-        {viewMode === 'folders' && getCurrentFolders().length === 0 &&
-         getNotesInFolder(selectedFolder?.id).length === 0 && (
-          <div className="empty-state">
-            {!syncState.directory ? (
-              <>
-                <div className="empty-state-icon">📁</div>
-                <p className="empty-state-title">Choose Directory First</p>
-                <p className="empty-state-description">
-                  Please select a sync directory in Settings to start creating notes
-                </p>
-                <button
-                  onClick={() => window.electronAPI?.openSettings()}
-                  className="btn-create-first"
-                >
-                  Open Settings
-                </button>
-              </>
-            ) : (
-              <>
-                <p>{folderPath.length > 0 ? 'This folder is empty' : 'No folders yet'}</p>
-                <button onClick={createNewNote} className="btn-create-first">
-                  Create your first note
-                </button>
-              </>
-            )}
-          </div>
-        )}
 
         {viewMode === 'notes' && getNotesInFolder(selectedFolder?.id).length === 0 && (
           <div className="empty-state">

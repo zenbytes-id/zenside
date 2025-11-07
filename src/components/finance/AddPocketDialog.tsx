@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Pocket } from '../../types/finance';
 import { POCKET_ICONS, POCKET_COLORS } from '../../constants/financeDefaults';
 
@@ -16,6 +16,15 @@ export const AddPocketDialog: React.FC<AddPocketDialogProps> = ({
   const [name, setName] = useState('');
   const [icon, setIcon] = useState(POCKET_ICONS[0]);
   const [color, setColor] = useState(POCKET_COLORS[0]);
+
+  // Reset form when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setName('');
+      setIcon(POCKET_ICONS[0]);
+      setColor(POCKET_COLORS[0]);
+    }
+  }, [isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

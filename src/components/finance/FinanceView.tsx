@@ -211,7 +211,17 @@ export const FinanceView: React.FC<FinanceViewProps> = ({ syncDirectory, onOpenS
     return (
       <div className="finance-view">
         <div className="empty-state">
-          <p>Please set up a sync directory in Settings to use ZenCash</p>
+          <div className="empty-state-icon">📁</div>
+          <p className="empty-state-title">Choose Directory First</p>
+          <p className="empty-state-description">
+            Please select a sync directory in Settings to start using ZenCash
+          </p>
+          <button
+            onClick={onOpenSettings}
+            className="btn-create-first"
+          >
+            Open Settings
+          </button>
         </div>
       </div>
     );

@@ -80,6 +80,28 @@ export class FilesystemSync {
   }
 
   /**
+   * Clear/reset the sync directory
+   */
+  async clearSyncDirectory(): Promise<void> {
+    console.log('[FILESYSTEM-SYNC] Clearing sync directory');
+
+    // Stop watching if active
+    if (this.watcher) {
+      await this.stopWatching();
+    }
+
+    // Clear in-memory state
+    this.syncDirectory = null;
+    this.isEnabled = false;
+
+    // Clear persisted settings
+    this.store.set('syncDirectory', null);
+    this.store.set('syncEnabled', false);
+
+    console.log('[FILESYSTEM-SYNC] Sync directory cleared');
+  }
+
+  /**
    * Save a note to the filesystem
    */
   async saveNote(note: Note): Promise<void> {

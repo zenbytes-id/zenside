@@ -174,11 +174,10 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
           // Start watching for changes
           await window.electronAPI.fs.watchChanges();
 
-          // Reload notes from filesystem
-          await loadNotesFromFilesystem();
-
-          // Reload the app to ensure sync state is properly initialized
-          window.location.reload();
+          // Close settings window - main window will reload via event
+          if (onClose) {
+            onClose();
+          }
         } else {
           setSyncStatus(prev => ({
             ...prev,
@@ -218,6 +217,50 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
   const handleOpenFolder = async () => {
     if (!window.electronAPI?.fs) return;
     await window.electronAPI.fs.openSyncFolder();
+  };
+
+  const handleClearSyncDirectory = async () => {
+    if (!window.electronAPI?.fs) return;
+
+    const confirmed = window.confirm(
+      'Are you sure you want to clear the sync directory? This will not delete your files, but the app will start fresh with no directory selected.'
+    );
+
+    if (!confirmed) return;
+
+    setIsLoading(true);
+
+    try {
+      const result = await window.electronAPI.fs.clearSyncDirectory();
+
+      if (result.success) {
+        setSyncStatus({
+          enabled: false,
+          directory: null,
+          status: 'disabled'
+        });
+
+        // Close settings window - main window will reload via event
+        if (onClose) {
+          onClose();
+        }
+      } else {
+        setSyncStatus(prev => ({
+          ...prev,
+          status: 'error',
+          message: result.error || 'Failed to clear sync directory'
+        }));
+      }
+    } catch (error) {
+      console.error('Failed to clear sync directory:', error);
+      setSyncStatus(prev => ({
+        ...prev,
+        status: 'error',
+        message: 'Failed to clear sync directory'
+      }));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleDisableSync = async () => {
@@ -442,6 +485,13 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
                             Disable Sync
                           </button>
                         )}
+                        <button
+                          className="settings-button danger"
+                          onClick={handleClearSyncDirectory}
+                          disabled={isLoading}
+                        >
+                          Clear Sync Directory
+                        </button>
                       </div>
                     </div>
                   ) : (

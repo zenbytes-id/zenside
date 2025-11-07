@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Transaction, Pocket, Category } from '../../types/finance';
-import { formatDateForInput, getTodayISO } from '../../utils/dateFormatting';
+import { getTodayISO } from '../../utils/dateFormatting';
 
 interface AddTransactionDialogProps {
   isOpen: boolean;
@@ -31,6 +31,21 @@ export const AddTransactionDialog: React.FC<AddTransactionDialogProps> = ({
 
   const incomeCategories = categories.filter(c => c.type === 'income');
   const expenseCategories = categories.filter(c => c.type === 'expense');
+
+  // Reset form when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setTransactionType('expense');
+      setAmount('');
+      setDisplayAmount('');
+      setDate(getTodayISO());
+      setDescription('');
+      setCategoryId('');
+      setPocketId('');
+      setFromPocketId('');
+      setToPocketId('');
+    }
+  }, [isOpen]);
 
   // Format number to Rupiah display format
   const formatRupiah = (value: string): string => {

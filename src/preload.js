@@ -23,12 +23,23 @@ contextBridge.exposeInMainWorld('electronAPI', {
     stopWatching: () => ipcRenderer.invoke('fs:stopWatching'),
     openSyncFolder: () => ipcRenderer.invoke('fs:openSyncFolder'),
     isSyncEnabled: () => ipcRenderer.invoke('fs:isSyncEnabled'),
+    clearSyncDirectory: () => ipcRenderer.invoke('fs:clearSyncDirectory'),
     getDefaultSyncPath: () => ipcRenderer.invoke('fs:getDefaultSyncPath')
   },
 
   // Filesystem change listener
   onFileChanged: (callback) => {
     ipcRenderer.on('fs:fileChanged', (_event, data) => callback(data));
+  },
+
+  // Sync directory cleared listener
+  onSyncDirectoryCleared: (callback) => {
+    ipcRenderer.on('fs:syncDirectoryCleared', () => callback());
+  },
+
+  // Sync directory changed listener
+  onSyncDirectoryChanged: (callback) => {
+    ipcRenderer.on('fs:syncDirectoryChanged', (_event, data) => callback(data));
   },
 
   // Search shortcut listener

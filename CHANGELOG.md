@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2025-11-07
+
+### Added
+- "Clear Sync Directory" button in Settings to reset sync configuration without deleting files
+- Empty state message prompting users to select sync directory when none is configured
+- Better event handling for sync directory changes with automatic app reload
+- `.gitkeep` files automatically created in empty folders to ensure Git tracking
+
+### Changed
+- Improved sync directory initialization flow - app now reloads automatically when directory is changed
+- Settings window now closes after sync directory selection instead of reloading
+- Enhanced empty state UI with better guidance for first-time users
+- Refactored folder view to show appropriate empty states based on sync status
+
+### Fixed
+- Sync state now properly checks both `enabled` and `directory` properties
+- App now clears notes and folders when sync directory is removed
+- IPC event listeners properly registered for sync directory changes
+- Settings window behavior improved to prevent multiple reloads
+
 ## [1.0.0] - 2025-11-07
 
 ### Initial Public Release
@@ -59,5 +79,6 @@ ZenSide is a dual-purpose macOS side panel application combining note-taking (Ze
 - Electron Forge for packaging and distribution
 - Code signing and notarization support for macOS
 
-[Unreleased]: https://github.com/zenbytes-id/zenside/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/zenbytes-id/zenside/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/zenbytes-id/zenside/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/zenbytes-id/zenside/releases/tag/v1.0.0

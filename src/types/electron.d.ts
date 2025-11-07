@@ -60,9 +60,12 @@ declare global {
       stopWatching: () => Promise<{ success: boolean; error?: string }>;
       openSyncFolder: () => Promise<{ success: boolean; error?: string }>;
       isSyncEnabled: () => Promise<boolean>;
+      clearSyncDirectory: () => Promise<{ success: boolean; error?: string }>;
       getDefaultSyncPath: () => Promise<string>;
     };
     onFileChanged: (callback: (data: { type: 'note' | 'folder'; action: 'add' | 'change' | 'unlink'; filePath: string }) => void) => void;
+    onSyncDirectoryCleared: (callback: () => void) => void;
+    onSyncDirectoryChanged: (callback: (data: { directory: string }) => void) => void;
     onOpenSearch: (callback: () => void) => void;
     git: {
       initialize: (syncDirectory: string) => Promise<void>;
