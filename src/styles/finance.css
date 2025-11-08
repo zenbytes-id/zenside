@@ -674,7 +674,7 @@
   display: flex;
   flex-direction: column;
   min-height: 0; /* Important for flex child scrolling */
-  margin-bottom: 120px; /* Space for git menu at bottom and transaction info */
+  margin-bottom: 0; /* Removed - footer is now sticky */
 }
 
 .transactions-header {
@@ -770,13 +770,16 @@
 }
 
 .transactions-info {
+  position: sticky;
+  bottom: 0;
   margin-top: 12px;
-  margin-bottom: 20px;
   padding: 8px 12px;
   background: #1e2127; /* Darker card to contrast with brighter background */
   border: 1px solid #2d3139;
   border-radius: 8px;
   text-align: center;
+  z-index: 10;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .transactions-info small {

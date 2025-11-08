@@ -478,101 +478,103 @@ export const FinanceView: React.FC<FinanceViewProps> = ({ syncDirectory, onOpenS
             </button>
           </div>
         ) : (
-          <div className="transactions-list" ref={transactionsListRef}>
-            {filteredTransactions
-              .sort((a, b) => {
-                // Sort by date first (descending)
-                const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime();
-                if (dateDiff !== 0) return dateDiff;
-                // If dates are equal, sort by createdAt (descending) for stable ordering
-                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-              })
-              .map(transaction => {
-                const category = transaction.categoryId ? getCategoryById(transaction.categoryId) : null;
-                const pocket = transaction.pocketId ? getPocketById(transaction.pocketId) : null;
-                const fromPocket = transaction.fromPocketId ? getPocketById(transaction.fromPocketId) : null;
-                const toPocket = transaction.toPocketId ? getPocketById(transaction.toPocketId) : null;
+          <>
+            <div className="transactions-list" ref={transactionsListRef}>
+              {filteredTransactions
+                .sort((a, b) => {
+                  // Sort by date first (descending)
+                  const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime();
+                  if (dateDiff !== 0) return dateDiff;
+                  // If dates are equal, sort by createdAt (descending) for stable ordering
+                  return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+                })
+                .map(transaction => {
+                  const category = transaction.categoryId ? getCategoryById(transaction.categoryId) : null;
+                  const pocket = transaction.pocketId ? getPocketById(transaction.pocketId) : null;
+                  const fromPocket = transaction.fromPocketId ? getPocketById(transaction.fromPocketId) : null;
+                  const toPocket = transaction.toPocketId ? getPocketById(transaction.toPocketId) : null;
 
-                const handleDelete = (e: React.MouseEvent) => {
-                  e.stopPropagation();
-                  if (window.confirm('Are you sure you want to delete this transaction?')) {
-                    deleteTransaction(transaction.id);
-                  }
-                };
+                  const handleDelete = (e: React.MouseEvent) => {
+                    e.stopPropagation();
+                    if (window.confirm('Are you sure you want to delete this transaction?')) {
+                      deleteTransaction(transaction.id);
+                    }
+                  };
 
-                const handleEdit = () => {
-                  setSelectedTransaction(transaction);
-                  setShowEditTransaction(true);
-                };
+                  const handleEdit = () => {
+                    setSelectedTransaction(transaction);
+                    setShowEditTransaction(true);
+                  };
 
-                return (
-                  <div
-                    key={transaction.id}
-                    className={`transaction-item ${transaction.type}`}
-                    onClick={handleEdit}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <div className="transaction-icon">
-                      {category?.icon || (transaction.type === 'transfer' ? '🔄' : '💰')}
-                    </div>
-                    <div className="transaction-info">
-                      <div className="transaction-description">
-                        {transaction.description || category?.name || 'Transaction'}
-                      </div>
-                      <div className="transaction-details">
-                        {transaction.type === 'transfer' ? (
-                          <span>
-                            {fromPocket?.name} → {toPocket?.name}
-                          </span>
-                        ) : (
-                          <span>{pocket?.name}</span>
-                        )}
-                        {' • '}
-                        <span>{new Date(transaction.date).toLocaleDateString()}</span>
-                      </div>
-                    </div>
-                    <div className={`transaction-amount ${transaction.type}`}>
-                      {transaction.type === 'income' && '+'}
-                      {transaction.type === 'expense' && '-'}
-                      {formatCurrency(transaction.amount)}
-                    </div>
-                    <button
-                      className="btn-delete-transaction"
-                      onClick={handleDelete}
-                      title="Delete transaction"
+                  return (
+                    <div
+                      key={transaction.id}
+                      className={`transaction-item ${transaction.type}`}
+                      onClick={handleEdit}
+                      style={{ cursor: 'pointer' }}
                     >
-                      ×
-                    </button>
-                  </div>
-                );
-              })}
+                      <div className="transaction-icon">
+                        {category?.icon || (transaction.type === 'transfer' ? '🔄' : '💰')}
+                      </div>
+                      <div className="transaction-info">
+                        <div className="transaction-description">
+                          {transaction.description || category?.name || 'Transaction'}
+                        </div>
+                        <div className="transaction-details">
+                          {transaction.type === 'transfer' ? (
+                            <span>
+                              {fromPocket?.name} → {toPocket?.name}
+                            </span>
+                          ) : (
+                            <span>{pocket?.name}</span>
+                          )}
+                          {' • '}
+                          <span>{new Date(transaction.date).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                      <div className={`transaction-amount ${transaction.type}`}>
+                        {transaction.type === 'income' && '+'}
+                        {transaction.type === 'expense' && '-'}
+                        {formatCurrency(transaction.amount)}
+                      </div>
+                      <button
+                        className="btn-delete-transaction"
+                        onClick={handleDelete}
+                        title="Delete transaction"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  );
+                })}
 
-            {/* Load More Button */}
-            {hasMoreToLoad && (
-              <button
-                className="btn-load-more"
-                onClick={handleLoadMore}
-                disabled={isLoadingMore}
-              >
-                {isLoadingMore ? 'Loading...' : `Load More (${availableMonths.length - loadedMonths.size} months available)`}
-              </button>
+              {/* Load More Button */}
+              {hasMoreToLoad && (
+                <button
+                  className="btn-load-more"
+                  onClick={handleLoadMore}
+                  disabled={isLoadingMore}
+                >
+                  {isLoadingMore ? 'Loading...' : `Load More (${availableMonths.length - loadedMonths.size} months available)`}
+                </button>
+              )}
+            </div>
+
+            {/* Info: Showing loaded months - moved outside scrollable area */}
+            {loadedMonths.size > 0 && (
+              <div className="transactions-info">
+                <small>
+                  Showing {filteredTransactions.length} transaction{filteredTransactions.length !== 1 ? 's' : ''}
+                  {dateFilter === 'all' && ` from ${loadedMonths.size} month${loadedMonths.size !== 1 ? 's' : ''}`}
+                  {dateFilter === 'week' && ` from last week`}
+                  {dateFilter === 'month' && ` from last month`}
+                  {dateFilter === 'year' && ` from last year`}
+                  {typeFilter !== 'all' && ` (${typeFilter} only)`}
+                  {hasMoreToLoad && ` • ${availableMonths.length - loadedMonths.size} more month${availableMonths.length - loadedMonths.size !== 1 ? 's' : ''} available`}
+                </small>
+              </div>
             )}
-          </div>
-        )}
-
-        {/* Info: Showing loaded months */}
-        {loadedMonths.size > 0 && (
-          <div className="transactions-info">
-            <small>
-              Showing {filteredTransactions.length} transaction{filteredTransactions.length !== 1 ? 's' : ''}
-              {dateFilter === 'all' && ` from ${loadedMonths.size} month${loadedMonths.size !== 1 ? 's' : ''}`}
-              {dateFilter === 'week' && ` from last week`}
-              {dateFilter === 'month' && ` from last month`}
-              {dateFilter === 'year' && ` from last year`}
-              {typeFilter !== 'all' && ` (${typeFilter} only)`}
-              {hasMoreToLoad && ` • ${availableMonths.length - loadedMonths.size} more month${availableMonths.length - loadedMonths.size !== 1 ? 's' : ''} available`}
-            </small>
-          </div>
+          </>
         )}
       </div>
 

@@ -8,6 +8,16 @@ import { Note, Folder } from '../types/note';
  * Register IPC handlers for filesystem operations
  */
 export function registerFilesystemHandlers(): void {
+  // Set up global file change callback to send events to all valid renderer windows
+  // This prevents "Object has been destroyed" errors when windows are recreated
+  filesystemSync.onFileChange((type, action, filePath) => {
+    BrowserWindow.getAllWindows().forEach(win => {
+      if (!win.isDestroyed()) {
+        win.webContents.send('fs:fileChanged', { type, action, filePath });
+      }
+    });
+  });
+
   // Initialize file watcher if sync was previously enabled
   const syncDir = filesystemSync.getSyncDirectory();
   const syncEnabled = filesystemSync.isSyncEnabled();
@@ -160,15 +170,11 @@ export function registerFilesystemHandlers(): void {
   });
 
   // Start watching for changes
-  ipcMain.handle('fs:watchChanges', async (event) => {
+  ipcMain.handle('fs:watchChanges', async () => {
     try {
       await filesystemSync.startWatching();
-
-      // Set up change callback to send events to renderer
-      filesystemSync.onFileChange((type, action, filePath) => {
-        event.sender.send('fs:fileChanged', { type, action, filePath });
-      });
-
+      // Note: The file change callback is already set globally in registerFilesystemHandlers()
+      // This prevents "Object has been destroyed" errors when windows are recreated
       return { success: true };
     } catch (error) {
       console.error('Error starting file watcher:', error);

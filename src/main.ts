@@ -54,10 +54,10 @@ class WindowManager {
     // Set up IPC handlers for window control
     this.setupIPC();
 
-    // Don't show panel on startup - only show when user clicks tray icon
-    // setTimeout(() => {
-    //   this.slideIn();
-    // }, 500);
+    // Show panel on startup with a small delay
+    setTimeout(() => {
+      this.slideIn();
+    }, 500);
 
     // Start mouse tracking for auto-hide hot bar
     this.startMouseTracking();

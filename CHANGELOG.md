@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Panel now opens automatically on app startup for immediate access
+- Transaction list footer now sticks to bottom of panel above git menu for better visibility
+- Improved scrolling behavior in ZenCash transaction history
+
+### Fixed
+- Critical: File watcher now sends events to all valid windows instead of potentially destroyed window references, preventing "Object has been destroyed" crash when creating new notes
+
 ## [1.0.1] - 2025-11-07
 
 ### Added
