@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.2] - 2025-11-08
+
 ### Changed
 - Panel now opens automatically on app startup for immediate access
 - Transaction list footer now sticks to bottom of panel above git menu for better visibility
@@ -87,6 +89,7 @@ ZenSide is a dual-purpose macOS side panel application combining note-taking (Ze
 - Electron Forge for packaging and distribution
 - Code signing and notarization support for macOS
 
-[Unreleased]: https://github.com/zenbytes-id/zenside/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/zenbytes-id/zenside/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/zenbytes-id/zenside/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/zenbytes-id/zenside/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/zenbytes-id/zenside/releases/tag/v1.0.0
