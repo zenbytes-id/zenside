@@ -27,6 +27,7 @@ export interface AppSettings {
   panelWidth: number;
   hotSideEnabled: boolean;
   autoHideDelay: number;
+  showPanelOnStartup: boolean; // Whether to show panel when app starts
   githubToken?: string;
   githubUsername?: string;
   githubRepo?: string;

@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
 import { Category, CategoryType } from '../types/note';
 import { useCategories } from '../hooks/useCategories';
+import { CATEGORY_ICONS } from '../constants/financeDefaults';
 import '../styles/categoryManager.css';
 
-const EMOJI_OPTIONS = [
-  '💰', '💸', '🍔', '🚗', '🛍️', '🎬', '📝', '⚕️',
-  '💼', '📈', '🎁', '🏠', '✈️', '📱', '🎓', '🎮',
-  '☕', '🍕', '🎵', '📚', '💊', '🚌', '🔧', '🎨'
-];
+const EMOJI_OPTIONS = CATEGORY_ICONS;
 
 const COLOR_OPTIONS = [
   '#FF6B6B', '#4ECDC4', '#FFE66D', '#95E1D3', '#FF8B94',

@@ -397,16 +397,63 @@
 .stat-row.total-balance-row {
   background: linear-gradient(135deg, #00d4ff 0%, #00bfea 100%);
   padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #2d3139;
+}
+
+.total-balance-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .stat-row.total-balance-row .stat-label {
   color: rgba(30, 30, 30, 0.8);
   font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .stat-row.total-balance-row .stat-value.total-balance-value {
   color: #1e1e1e;
   font-size: 28px;
+  font-weight: 700;
+}
+
+/* Balance Visibility Toggle */
+.stat-value-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-toggle-visibility {
+  background: rgba(30, 30, 30, 0.15);
+  border: 1px solid rgba(30, 30, 30, 0.1);
+  border-radius: 8px;
+  padding: 8px;
+  color: rgba(30, 30, 30, 0.6);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  line-height: 0;
+  flex-shrink: 0;
+}
+
+.btn-toggle-visibility:hover {
+  background: rgba(30, 30, 30, 0.25);
+  border-color: rgba(30, 30, 30, 0.2);
+  color: #1e1e1e;
+  transform: scale(1.05);
+}
+
+.btn-toggle-visibility:active {
+  transform: scale(0.95);
 }
 
 /* Expandable Toggle Row */
@@ -1029,6 +1076,7 @@
   padding: 20px;
   color: #e4e4e4;
   overflow-y: auto;
+  overflow-x: hidden;
   flex: 1;
 }
 
@@ -1177,6 +1225,30 @@
   grid-template-columns: repeat(6, 1fr);
   gap: 8px;
   width: 100%;
+  max-width: 100%;
+  max-height: 280px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+}
+
+/* Scrollbar styling for icon picker */
+.icon-picker::-webkit-scrollbar {
+  width: 6px;
+}
+
+.icon-picker::-webkit-scrollbar-track {
+  background: #1a1d23;
+  border-radius: 3px;
+}
+
+.icon-picker::-webkit-scrollbar-thumb {
+  background: #2d3139;
+  border-radius: 3px;
+}
+
+.icon-picker::-webkit-scrollbar-thumb:hover {
+  background: #3d4149;
 }
 
 .icon-option {
@@ -1184,12 +1256,19 @@
   background: #2d3139;
   border: 2px solid #3a3f4a;
   border-radius: 8px;
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: auto;
+  padding: 4px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .icon-option:hover {
@@ -1208,6 +1287,8 @@
   grid-template-columns: repeat(6, 1fr);
   gap: 8px;
   width: 100%;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .color-option {
@@ -1217,6 +1298,12 @@
   cursor: pointer;
   transition: all 0.2s;
   position: relative;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: auto;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .color-option:hover {

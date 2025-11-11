@@ -102,6 +102,14 @@ declare global {
       loadCategories: () => Promise<Category[]>;
       saveCategories: (categories: Category[]) => Promise<void>;
     };
+    settings: {
+      getShowPanelOnStartup: () => Promise<boolean>;
+      setShowPanelOnStartup: (value: boolean) => Promise<{ success: boolean }>;
+      getToggleShortcutEnabled: () => Promise<boolean>;
+      setToggleShortcutEnabled: (value: boolean) => Promise<{ success: boolean }>;
+      getToggleShortcut: () => Promise<string>;
+      setToggleShortcut: (value: string) => Promise<{ success: boolean }>;
+    };
   }
 }
 

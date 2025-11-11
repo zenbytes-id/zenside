@@ -34,7 +34,7 @@
 }
 
 .folder-item {
-  padding: 12px;
+  padding: 12px 8px 12px 12px; /* Reduced right padding for tighter fit */
   margin-bottom: 4px;
   background-color: #252830;
   border-radius: 8px;
@@ -42,12 +42,13 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  transition: background-color 0.2s;
+  transition: background-color 0.15s ease;
   border: 1px solid transparent;
 }
 
 .folder-item:hover {
   background-color: #2d323d;
+  /* Simple highlight only - no scale, transform, or size changes */
 }
 
 .folder-item.editing {
@@ -68,16 +69,17 @@
   padding: 2px 4px;
   margin: -2px -4px;
   border-radius: 3px;
-  transition: background-color 0.15s;
+  transition: none; /* Removed transition to prevent any animation */
   display: inline-block;
 }
 
 .folder-name:hover {
-  background-color: rgba(255, 255, 255, 0.08);
+  /* No hover effect on folder name - folder-item hover handles highlighting */
 }
 
 .folder-spacer {
   flex: 1;
+  min-width: 8px; /* Minimal spacing to push actions to the right */
 }
 
 .folder-name-input {
@@ -96,6 +98,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  min-height: 24px; /* Match folder-count height to prevent vertical shift */
 }
 
 .folder-count {
@@ -106,6 +109,13 @@
   border-radius: 12px;
   min-width: 24px;
   text-align: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+  transform: translateX(0);
+}
+
+.folder-item:hover .folder-count {
+  transform: translateX(-28px); /* Shift left by button width + gap */
 }
 
 .btn-delete-folder {
@@ -117,16 +127,18 @@
   padding: 0;
   width: 20px;
   height: 20px;
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 3px;
-  transition: background-color 0.2s, color 0.2s;
+  transition: background-color 0.2s, color 0.2s, opacity 0.2s ease;
   flex-shrink: 0;
+  opacity: 0;
+  margin-left: -28px; /* Negative margin to overlap count's original position */
 }
 
 .folder-item:hover .btn-delete-folder {
-  display: flex;
+  opacity: 1;
 }
 
 .btn-delete-folder:hover {

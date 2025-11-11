@@ -9,7 +9,7 @@ import { AddPocketDialog } from './AddPocketDialog';
 import { EditPocketDialog } from './EditPocketDialog';
 import { ManagePocketsDialog } from './ManagePocketsDialog';
 import { ExpenseChartDialog } from './ExpenseChartDialog';
-import { FiSearch, FiSettings, FiPlus, FiX, FiFilter, FiList, FiPieChart, FiChevronDown, FiChevronUp } from 'react-icons/fi';
+import { FiSearch, FiSettings, FiPlus, FiX, FiFilter, FiList, FiPieChart, FiChevronDown, FiChevronUp, FiEye, FiEyeOff } from 'react-icons/fi';
 
 interface FinanceViewProps {
   syncDirectory: string | null;
@@ -54,12 +54,26 @@ export const FinanceView: React.FC<FinanceViewProps> = ({ syncDirectory, onOpenS
   const [loadedMonths, setLoadedMonths] = useState<Set<string>>(new Set());
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [isExpenseExpanded, setIsExpenseExpanded] = useState(false);
+  const [isBalanceVisible, setIsBalanceVisible] = useState(() => {
+    const saved = localStorage.getItem('zenside-balance-visible');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
   const addMenuRef = useRef<HTMLDivElement>(null);
   const transactionsListRef = useRef<HTMLDivElement>(null);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Calculate active filter count
   const activeFiltersCount = (dateFilter !== 'all' ? 1 : 0) + (typeFilter !== 'all' ? 1 : 0);
+
+  // Helper function to display balance as hidden or visible
+  const formatBalance = (amount: number) => {
+    return isBalanceVisible ? formatCurrency(amount) : '••••••';
+  };
+
+  // Save balance visibility preference to localStorage
+  useEffect(() => {
+    localStorage.setItem('zenside-balance-visible', JSON.stringify(isBalanceVisible));
+  }, [isBalanceVisible]);
 
   // Handle scrollbar auto-hide for transactions list
   useEffect(() => {
@@ -327,8 +341,20 @@ export const FinanceView: React.FC<FinanceViewProps> = ({ syncDirectory, onOpenS
         <div className="monthly-stats">
           {/* Total Balance - Always Visible */}
           <div className="stat-row total-balance-row">
-            <div className="stat-label">Total Balance</div>
-            <div className="stat-value total-balance-value">{formatCurrency(totalBalance)}</div>
+            <div className="total-balance-left">
+              <div className="stat-label">Total Balance</div>
+              <div className="stat-value total-balance-value">{formatBalance(totalBalance)}</div>
+            </div>
+            <button
+              className="btn-toggle-visibility"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsBalanceVisible(!isBalanceVisible);
+              }}
+              title={isBalanceVisible ? "Hide balance" : "Show balance"}
+            >
+              {isBalanceVisible ? <FiEye size={18} /> : <FiEyeOff size={18} />}
+            </button>
           </div>
 
           {/* Expandable Section Toggle */}
@@ -349,13 +375,13 @@ export const FinanceView: React.FC<FinanceViewProps> = ({ syncDirectory, onOpenS
               {/* This Month Income */}
               <div className="stat-row">
                 <div className="stat-label">This Month Income</div>
-                <div className="stat-value income">{formatCurrency(monthlyIncome)}</div>
+                <div className="stat-value income">{formatBalance(monthlyIncome)}</div>
               </div>
 
               {/* This Month Expense */}
               <div className="stat-row">
                 <div className="stat-label">This Month Expense</div>
-                <div className="stat-value expense">{formatCurrency(monthlyExpense)}</div>
+                <div className="stat-value expense">{formatBalance(monthlyExpense)}</div>
               </div>
 
               {/* View Chart Button */}
@@ -426,7 +452,7 @@ export const FinanceView: React.FC<FinanceViewProps> = ({ syncDirectory, onOpenS
                   <div className="pocket-info">
                     <div className="pocket-name">{pocket.name}</div>
                     <div className="pocket-balance" style={{ color: pocket.color }}>
-                      {formatCurrency(pocket.balance)}
+                      {formatBalance(pocket.balance)}
                     </div>
                   </div>
                   {!pocket.isDefault && (

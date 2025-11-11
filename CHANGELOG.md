@@ -7,6 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Panel visibility toggle in Settings → General to control whether panel shows on app startup
+- Configurable global keyboard shortcut to toggle panel show/hide
+- 9 predefined keyboard shortcut options (Cmd+Shift+S/N/P, Cmd+Alt+N/S, F9-F12)
+- Settings stored persistently using electron-store
+- Expanded emoji icon library from 24 to 72 icons for both pockets and categories
+- 10 categorized icon themes: Money & Finance, Food & Drink, Transportation, Shopping & Items, Entertainment & Hobbies, Work & Study, Home & Living, Health & Wellness, Goals & Planning, and Miscellaneous
+- Balance visibility toggle in ZenCash to hide/show sensitive financial information
+- Eye icon button to toggle visibility of Total Balance, Monthly Income, Monthly Expense, and Pocket balances
+- Persistent balance visibility preference saved to localStorage across app sessions
+- "About ZenSide" menu item in tray menu with app logo and comprehensive information
+
+### Changed
+- Improved folder hover interaction in ZenNote with smooth slide animation - count shifts left and delete button appears in its place
+- Optimized folder item layout to be more compact with tighter spacing on the right edge
+- Simplified folder hover effect in ZenNote to only show highlight without pop/resize animation
+- All keyboard shortcuts are now disabled by default and must be enabled in Settings
+- Removed hardcoded Cmd+F and Cmd+Shift+S shortcuts
+- Icon picker now uses 6-column grid layout with vertical scrolling for better organization
+- Category Manager now shares the same comprehensive icon library as pocket icons
+- Balance values in ZenCash now display as '••••••' when hidden for improved privacy
+- Enhanced Git toast notifications with floating effect, layered shadows, and backdrop blur
+- Toast animations now include scale transform for more dynamic entrance
+- Toast backgrounds upgraded to gradient styles with color-specific glowing shadows
+- "About ZenSide" dialog now dynamically shows version from package.json
+- Keyboard shortcut information in "About ZenSide" now reflects actual configured shortcut or shows "Disabled" status
+
+### Fixed
+- Critical: Git auto-sync now correctly pushes unpushed commits even when there are no uncommitted changes
+- Auto-sync and manual "Sync Now" button now properly detect and push commits that are ahead of remote
+- Icon picker in Create New Pocket dialog no longer overflows card boundaries
+- Icon picker in Category Manager properly displays all icons with scrollable container
+- Critical: App no longer crashes after macOS sleep/wake or screen lock/unlock events
+- Panel window now properly restores after system resume with correct visibility state
+- Hot bar continues to function correctly after laptop lid close/open cycles
+- Mouse tracking automatically restarts if interrupted by power management events
+- Window restoration now waits for webContents to load before showing panel
+- Added safety checks for destroyed webContents to prevent JavaScript execution errors
+
+### Removed
+- Global keyboard shortcuts (Cmd+Shift+S to toggle, Cmd+F for search) - now opt-in via Settings
+
 ## [1.0.2] - 2025-11-08
 
 ### Changed

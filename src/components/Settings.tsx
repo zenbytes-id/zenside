@@ -27,6 +27,9 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
   const [autoSyncEnabled, setAutoSyncEnabled] = useState(false);
   const [autoSyncInterval, setAutoSyncInterval] = useState(60); // seconds
   const [hideAutoSyncFiles, setHideAutoSyncFiles] = useState(true); // Hide auto-sync files by default
+  const [showPanelOnStartup, setShowPanelOnStartup] = useState(true); // Show panel on startup by default
+  const [toggleShortcutEnabled, setToggleShortcutEnabled] = useState(false);
+  const [toggleShortcut, setToggleShortcut] = useState('CommandOrControl+Shift+S');
 
   // Git-related states
   const git = useGit(syncStatus.directory);
@@ -47,6 +50,7 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
     if (isOpen) {
       loadSyncStatus();
       loadAutoSyncSettings();
+      loadPanelSettings();
     }
   }, [isOpen]);
 
@@ -128,6 +132,68 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
     window.dispatchEvent(new CustomEvent('git:hide-files-changed', {
       detail: { hide }
     }));
+  };
+
+  const loadPanelSettings = async () => {
+    if (!window.electronAPI?.settings) return;
+
+    try {
+      const [showOnStartup, shortcutEnabled, shortcut] = await Promise.all([
+        window.electronAPI.settings.getShowPanelOnStartup(),
+        window.electronAPI.settings.getToggleShortcutEnabled(),
+        window.electronAPI.settings.getToggleShortcut()
+      ]);
+      setShowPanelOnStartup(showOnStartup);
+      setToggleShortcutEnabled(shortcutEnabled);
+      setToggleShortcut(shortcut);
+    } catch (error) {
+      console.error('Failed to load panel settings:', error);
+    }
+  };
+
+  const handleToggleShowPanelOnStartup = async (show: boolean) => {
+    if (!window.electronAPI?.settings) return;
+
+    try {
+      setShowPanelOnStartup(show);
+      await window.electronAPI.settings.setShowPanelOnStartup(show);
+    } catch (error) {
+      console.error('Failed to save panel setting:', error);
+    }
+  };
+
+  const handleToggleShortcutEnabled = async (enabled: boolean) => {
+    if (!window.electronAPI?.settings) return;
+
+    try {
+      setToggleShortcutEnabled(enabled);
+      await window.electronAPI.settings.setToggleShortcutEnabled(enabled);
+
+      // Notify user to restart app for changes to take effect
+      if (enabled) {
+        alert('Keyboard shortcut enabled. Please restart the app for changes to take effect.');
+      } else {
+        alert('Keyboard shortcut disabled. Please restart the app for changes to take effect.');
+      }
+    } catch (error) {
+      console.error('Failed to save shortcut enabled setting:', error);
+    }
+  };
+
+  const handleShortcutChange = async (shortcut: string) => {
+    if (!window.electronAPI?.settings) return;
+
+    try {
+      setToggleShortcut(shortcut);
+      await window.electronAPI.settings.setToggleShortcut(shortcut);
+
+      // Notify user to restart app for changes to take effect
+      if (toggleShortcutEnabled) {
+        alert('Keyboard shortcut updated. Please restart the app for changes to take effect.');
+      }
+    } catch (error) {
+      console.error('Failed to save shortcut setting:', error);
+    }
   };
 
   const loadSyncStatus = async () => {
@@ -844,6 +910,66 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
           {activeTab === 'general' && (
             <div className="settings-section">
               <h3>General Settings</h3>
+              <div className="settings-group">
+                <h4>Panel Behavior</h4>
+                <p className="settings-info">
+                  Control how the panel behaves when the app starts.
+                </p>
+                <label className="auto-sync-toggle" style={{ marginTop: '12px' }}>
+                  <input
+                    type="checkbox"
+                    checked={showPanelOnStartup}
+                    onChange={(e) => handleToggleShowPanelOnStartup(e.target.checked)}
+                  />
+                  <span className="toggle-label">Show panel on startup</span>
+                </label>
+                <p className="settings-hint">
+                  When enabled, the panel will automatically slide in when the app launches.
+                </p>
+              </div>
+              <div className="settings-divider" style={{ margin: '24px 0' }} />
+              <div className="settings-group">
+                <h4>Keyboard Shortcut</h4>
+                <p className="settings-info">
+                  Configure a global keyboard shortcut to toggle the panel.
+                </p>
+                <label className="auto-sync-toggle" style={{ marginTop: '12px' }}>
+                  <input
+                    type="checkbox"
+                    checked={toggleShortcutEnabled}
+                    onChange={(e) => handleToggleShortcutEnabled(e.target.checked)}
+                  />
+                  <span className="toggle-label">Enable keyboard shortcut</span>
+                </label>
+
+                {toggleShortcutEnabled && (
+                  <div style={{ marginTop: '16px' }}>
+                    <label htmlFor="shortcut-select">Shortcut Key:</label>
+                    <select
+                      id="shortcut-select"
+                      className="settings-select"
+                      value={toggleShortcut}
+                      onChange={(e) => handleShortcutChange(e.target.value)}
+                      style={{ marginTop: '8px', width: '100%', maxWidth: '300px' }}
+                    >
+                      <option value="CommandOrControl+Shift+S">Cmd/Ctrl + Shift + S</option>
+                      <option value="CommandOrControl+Shift+N">Cmd/Ctrl + Shift + N</option>
+                      <option value="CommandOrControl+Shift+P">Cmd/Ctrl + Shift + P</option>
+                      <option value="CommandOrControl+Alt+N">Cmd/Ctrl + Alt + N</option>
+                      <option value="CommandOrControl+Alt+S">Cmd/Ctrl + Alt + S</option>
+                      <option value="F9">F9</option>
+                      <option value="F10">F10</option>
+                      <option value="F11">F11</option>
+                      <option value="F12">F12</option>
+                    </select>
+                    <p className="settings-hint" style={{ marginTop: '8px' }}>
+                      Press the selected shortcut to show/hide the panel from anywhere.
+                      Restart the app after changing this setting.
+                    </p>
+                  </div>
+                )}
+              </div>
+              <div className="settings-divider" style={{ margin: '24px 0' }} />
               <div className="settings-group">
                 <h4>Category Management</h4>
                 <p className="settings-info">

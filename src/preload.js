@@ -96,5 +96,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
     savePockets: (pockets) => ipcRenderer.invoke('finance:savePockets', pockets),
     loadCategories: () => ipcRenderer.invoke('finance:loadCategories'),
     saveCategories: (categories) => ipcRenderer.invoke('finance:saveCategories', categories)
+  },
+
+  // App settings
+  settings: {
+    getShowPanelOnStartup: () => ipcRenderer.invoke('settings:getShowPanelOnStartup'),
+    setShowPanelOnStartup: (value) => ipcRenderer.invoke('settings:setShowPanelOnStartup', value),
+    getToggleShortcutEnabled: () => ipcRenderer.invoke('settings:getToggleShortcutEnabled'),
+    setToggleShortcutEnabled: (value) => ipcRenderer.invoke('settings:setToggleShortcutEnabled', value),
+    getToggleShortcut: () => ipcRenderer.invoke('settings:getToggleShortcut'),
+    setToggleShortcut: (value) => ipcRenderer.invoke('settings:setToggleShortcut', value)
   }
 });

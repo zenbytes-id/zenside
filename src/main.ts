@@ -3,6 +3,10 @@ import * as path from 'path';
 import { registerFilesystemHandlers } from './main/fs-handlers';
 import { registerGitHandlers } from './main/git-handlers';
 import { registerFinanceHandlers } from './main/finance-handlers';
+import { registerSettingsHandlers, settingsStore } from './main/settings-handlers';
+
+// Import package.json for version info
+const packageJson = require('../package.json');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -54,10 +58,13 @@ class WindowManager {
     // Set up IPC handlers for window control
     this.setupIPC();
 
-    // Show panel on startup with a small delay
-    setTimeout(() => {
-      this.slideIn();
-    }, 500);
+    // Show panel on startup with a small delay (if enabled in settings)
+    const shouldShowOnStartup = settingsStore.getShowPanelOnStartup();
+    if (shouldShowOnStartup) {
+      setTimeout(() => {
+        this.slideIn();
+      }, 500);
+    }
 
     // Start mouse tracking for auto-hide hot bar
     this.startMouseTracking();
@@ -90,6 +97,7 @@ class WindowManager {
   }
 
   private restoreWindowsAfterSleep() {
+    console.log('Restoring windows after sleep/wake...');
     const primaryDisplay = screen.getPrimaryDisplay();
     const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize;
 
@@ -97,6 +105,13 @@ class WindowManager {
     const edgeBarDestroyed = !this.edgeBar || this.edgeBar.isDestroyed();
     const mainPanelDestroyed = !this.mainPanel || this.mainPanel.isDestroyed();
 
+    console.log('Window state check:', {
+      edgeBarDestroyed,
+      mainPanelDestroyed,
+      isPanelVisible: this.isPanelVisible
+    });
+
+    // Handle edge bar restoration
     if (edgeBarDestroyed) {
       console.log('Edge bar destroyed after sleep - recreating');
       this.createEdgeBar(screenWidth, screenHeight);
@@ -106,29 +121,56 @@ class WindowManager {
       const hotBarX = this.isPanelVisible ? this.panelWidth : 0;
       const hotBarY = Math.floor((screenHeight - 80) / 2);
       this.edgeBar.setPosition(hotBarX, hotBarY);
+      console.log('Edge bar repositioned to:', { x: hotBarX, y: hotBarY });
     }
 
+    // Handle main panel restoration
     if (mainPanelDestroyed) {
       console.log('Main panel destroyed after sleep - recreating');
       this.createMainPanel(screenWidth, screenHeight);
 
-      // Restore panel visibility state
-      if (this.isPanelVisible) {
-        // Panel was visible before sleep - show it again
-        const targetX = this.panelPosition === 'left' ? 0 : screenWidth - this.panelWidth;
-        this.mainPanel?.setPosition(targetX, 0);
-        this.mainPanel?.showInactive();
-      }
+      // Wait for main panel to be ready before restoring visibility
+      this.mainPanel?.webContents.once('did-finish-load', () => {
+        console.log('Main panel loaded after recreation');
+
+        // Restore panel visibility state AFTER content is loaded
+        if (this.isPanelVisible) {
+          console.log('Restoring panel visibility');
+          const targetX = this.panelPosition === 'left' ? 0 : screenWidth - this.panelWidth;
+          this.mainPanel?.setPosition(targetX, 0);
+          this.mainPanel?.showInactive();
+        } else {
+          // Keep panel hidden
+          const targetX = this.panelPosition === 'left' ? -this.panelWidth : screenWidth;
+          this.mainPanel?.setPosition(targetX, 0);
+        }
+      });
     } else {
-      // Ensure main panel is in correct position
-      if (this.isPanelVisible) {
-        const targetX = this.panelPosition === 'left' ? 0 : screenWidth - this.panelWidth;
-        this.mainPanel.setPosition(targetX, 0);
-        this.mainPanel.showInactive();
-      } else {
-        const targetX = this.panelPosition === 'left' ? -this.panelWidth : screenWidth;
-        this.mainPanel.setPosition(targetX, 0);
+      // Window exists but might be in wrong position - reposition it
+      try {
+        if (this.isPanelVisible) {
+          const targetX = this.panelPosition === 'left' ? 0 : screenWidth - this.panelWidth;
+          this.mainPanel.setPosition(targetX, 0);
+
+          // Ensure it's visible
+          if (!this.mainPanel.isVisible()) {
+            this.mainPanel.showInactive();
+          }
+          console.log('Panel repositioned and shown:', { x: targetX, y: 0 });
+        } else {
+          const targetX = this.panelPosition === 'left' ? -this.panelWidth : screenWidth;
+          this.mainPanel.setPosition(targetX, 0);
+          console.log('Panel repositioned (hidden):', { x: targetX, y: 0 });
+        }
+      } catch (error) {
+        console.error('Error repositioning panel after sleep:', error);
       }
+    }
+
+    // Restart mouse tracking if it was stopped
+    if (!this.mouseTrackingInterval) {
+      console.log('Restarting mouse tracking after sleep');
+      this.startMouseTracking();
     }
 
     console.log('Window state restored after sleep');
@@ -224,12 +266,40 @@ class WindowManager {
       {
         label: 'About ZenSide',
         click: () => {
+          // Load app icon for about dialog
+          const iconPath = path.join(__dirname, '../assets/favicon_io/android-chrome-192x192.png');
+          const appIcon = nativeImage.createFromPath(iconPath);
+
+          // Get current keyboard shortcut setting
+          const shortcutEnabled = settingsStore.getToggleShortcutEnabled();
+          const currentShortcut = settingsStore.getToggleShortcut();
+          const shortcutInfo = shortcutEnabled
+            ? `• ${currentShortcut} to toggle panel`
+            : '• Disabled (enable in Settings)';
+
           dialog.showMessageBox({
             type: 'info',
             title: 'About ZenSide',
-            message: 'ZenSide v1.0.1',
-            detail: 'A macOS side panel note-taking application\n\nShortcut: Cmd+Shift+S to toggle panel\nClick the hot bar on the left edge to show/hide',
+            message: `ZenSide v${packageJson.version}`,
+            detail: `${packageJson.description}
+
+🗒️ Features:
+• ZenNote - Markdown-based note-taking with Git sync
+• ZenCash - Personal finance tracking with multiple pockets
+• Quick access from screen edge with hot bar
+• Sync your notes with GitHub
+
+⌨️ Keyboard Shortcut:
+${shortcutInfo}
+
+🖱️ Mouse Control:
+• Click the hot bar on the screen edge to show/hide
+• Click tray icon to toggle panel
+
+© ${new Date().getFullYear()} ${packageJson.author.name}
+${packageJson.homepage}`,
             buttons: ['OK'],
+            icon: appIcon,
           });
         },
       },
@@ -267,45 +337,61 @@ class WindowManager {
   }
 
   private startMouseTracking() {
+    // Clear any existing tracking interval to prevent duplicates
+    if (this.mouseTrackingInterval) {
+      clearInterval(this.mouseTrackingInterval);
+      this.mouseTrackingInterval = null;
+    }
+
     // Track mouse position every 50ms for responsive detection
     this.mouseTrackingInterval = setInterval(() => {
-      const currentPos = screen.getCursorScreenPoint();
+      try {
+        const currentPos = screen.getCursorScreenPoint();
 
-      if (!this.edgeBar || this.edgeBar.isDestroyed()) return;
+        if (!this.edgeBar || this.edgeBar.isDestroyed()) return;
 
-      // Check if mouse has moved
-      const hasMoved = !this.lastMousePosition ||
-        currentPos.x !== this.lastMousePosition.x ||
-        currentPos.y !== this.lastMousePosition.y;
+        // Check if mouse has moved
+        const hasMoved = !this.lastMousePosition ||
+          currentPos.x !== this.lastMousePosition.x ||
+          currentPos.y !== this.lastMousePosition.y;
 
-      if (hasMoved) {
-        // Mouse is moving - show hot bar
-        if (!this.isHotBarVisible) {
-          this.showHotBar();
-          this.isHotBarVisible = true;
+        if (hasMoved) {
+          // Mouse is moving - show hot bar
+          if (!this.isHotBarVisible) {
+            this.showHotBar();
+            this.isHotBarVisible = true;
+          }
+
+          // Clear existing hide timeout
+          if (this.hideTimeout) {
+            clearTimeout(this.hideTimeout);
+            this.hideTimeout = null;
+          }
+
+          // Set new hide timeout for 800ms of inactivity
+          this.hideTimeout = setTimeout(() => {
+            this.hideHotBar();
+            this.isHotBarVisible = false;
+            this.hideTimeout = null;
+          }, 800); // Hide after 0.8 seconds of cursor inactivity
         }
 
-        // Clear existing hide timeout
-        if (this.hideTimeout) {
-          clearTimeout(this.hideTimeout);
-          this.hideTimeout = null;
-        }
-
-        // Set new hide timeout for 800ms of inactivity
-        this.hideTimeout = setTimeout(() => {
-          this.hideHotBar();
-          this.isHotBarVisible = false;
-          this.hideTimeout = null;
-        }, 800); // Hide after 0.8 seconds of cursor inactivity
+        // Update last position
+        this.lastMousePosition = { x: currentPos.x, y: currentPos.y };
+      } catch (error) {
+        console.error('Error in mouse tracking:', error);
+        // Continue tracking even if there's an error
       }
-
-      // Update last position
-      this.lastMousePosition = { x: currentPos.x, y: currentPos.y };
     }, 50); // Check every 50ms for smooth detection
   }
 
   private showHotBar() {
     if (this.edgeBar && !this.edgeBar.isDestroyed()) {
+      // Check if webContents is ready before executing JavaScript
+      if (!this.edgeBar.webContents || this.edgeBar.webContents.isDestroyed()) {
+        return;
+      }
+
       this.edgeBar.webContents.executeJavaScript(`
         (function() {
           const btn = document.querySelector('.btn');
@@ -314,12 +400,20 @@ class WindowManager {
             btn.style.pointerEvents = 'auto';
           }
         })();
-      `).catch(() => {});
+      `).catch((error) => {
+        // Silently ignore errors (webContents might not be ready yet)
+        console.debug('Hot bar show error:', error.message);
+      });
     }
   }
 
   private hideHotBar() {
     if (this.edgeBar && !this.edgeBar.isDestroyed()) {
+      // Check if webContents is ready before executing JavaScript
+      if (!this.edgeBar.webContents || this.edgeBar.webContents.isDestroyed()) {
+        return;
+      }
+
       this.edgeBar.webContents.executeJavaScript(`
         (function() {
           const btn = document.querySelector('.btn');
@@ -328,7 +422,10 @@ class WindowManager {
             btn.style.pointerEvents = 'none';
           }
         })();
-      `).catch(() => {});
+      `).catch((error) => {
+        // Silently ignore errors (webContents might not be ready yet)
+        console.debug('Hot bar hide error:', error.message);
+      });
     }
   }
 
@@ -567,31 +664,34 @@ class WindowManager {
   }
 
   private registerShortcuts() {
-    // Register CMD+Shift+S (or Ctrl+Shift+S on Windows/Linux) to toggle panel
-    const toggleShortcut = process.platform === 'darwin' ? 'Command+Shift+S' : 'Ctrl+Shift+S';
+    // Check if shortcuts are enabled in settings
+    const shortcutEnabled = settingsStore.getToggleShortcutEnabled();
 
-    globalShortcut.register(toggleShortcut, () => {
-      if (this.isPanelVisible) {
-        this.slideOut();
+    if (!shortcutEnabled) {
+      console.log('Keyboard shortcuts are disabled in settings');
+      return;
+    }
+
+    // Get the configured shortcut
+    const shortcut = settingsStore.getToggleShortcut();
+
+    try {
+      const registered = globalShortcut.register(shortcut, () => {
+        if (this.isPanelVisible) {
+          this.slideOut();
+        } else {
+          this.slideIn();
+        }
+      });
+
+      if (registered) {
+        console.log(`✓ Registered keyboard shortcut: ${shortcut}`);
       } else {
-        this.slideIn();
+        console.error(`✗ Failed to register keyboard shortcut: ${shortcut} (may be in use by another app)`);
       }
-    });
-
-    // Register CMD+F (or Ctrl+F on Windows/Linux) to open search
-    const searchShortcut = process.platform === 'darwin' ? 'Command+F' : 'Ctrl+F';
-
-    globalShortcut.register(searchShortcut, () => {
-      // If panel is hidden, show it first
-      if (!this.isPanelVisible) {
-        this.slideIn();
-      }
-
-      // Send event to renderer to open search
-      if (this.mainPanel) {
-        this.mainPanel.webContents.send('open-search');
-      }
-    });
+    } catch (error) {
+      console.error('Error registering keyboard shortcut:', error);
+    }
   }
 
   slideIn() {
@@ -772,6 +872,9 @@ app.whenReady().then(() => {
 
   // Register IPC handlers for finance operations
   registerFinanceHandlers();
+
+  // Register IPC handlers for app settings
+  registerSettingsHandlers();
 
   windowManager = new WindowManager('left');
   windowManager.createWindows();

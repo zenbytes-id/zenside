@@ -124,14 +124,19 @@ export function useAutoSync(
     }
 
     try {
-      // Get status first to check if there are actually changes
+      // Get status first to check if there are actually changes or unpushed commits
       const status = await window.electronAPI?.git.status();
 
-      if (!status || status.files.length === 0) {
-        console.log('[AutoSync] No uncommitted changes, skipping sync');
+      // Skip sync only if there are no uncommitted changes AND no unpushed commits
+      if (!status || (status.files.length === 0 && status.ahead === 0)) {
+        console.log('[AutoSync] No uncommitted changes and no unpushed commits, skipping sync');
         hasUncommittedChangesRef.current = false;
         return;
       }
+
+      // If there are unpushed commits but no uncommitted changes, skip commit and go straight to push
+      const hasUncommittedChanges = status.files.length > 0;
+      const hasUnpushedCommits = status.ahead > 0;
 
       // Prevent concurrent syncs
       if (syncInProgressRef.current) {
@@ -143,27 +148,40 @@ export function useAutoSync(
       setIsSyncing(true);
       setSyncError(null);
 
-      console.log('[AutoSync] Starting sync with', status.files.length, 'uncommitted files...');
+      console.log('[AutoSync] Starting sync...', {
+        uncommittedFiles: status.files.length,
+        unpushedCommits: status.ahead
+      });
 
-      // Stage all changes
-      await window.electronAPI?.git.add('.');
+      // Only commit if there are uncommitted changes
+      if (hasUncommittedChanges) {
+        console.log('[AutoSync] Staging and committing', status.files.length, 'files...');
 
-      // Commit with auto-generated message
-      const timestamp = new Date().toISOString();
-      const message = `Auto-sync: ${timestamp}`;
-      await window.electronAPI?.git.commit(message);
+        // Stage all changes
+        await window.electronAPI?.git.add('.');
 
-      // Pull first to get remote changes
-      try {
-        await window.electronAPI?.git.pull();
-        console.log('[AutoSync] Pulled successfully');
-      } catch (pullError) {
-        // If pull fails, it might be because the branch doesn't exist remotely yet
-        console.log('[AutoSync] Pull failed (might be first push):', pullError);
+        // Commit with auto-generated message
+        const timestamp = new Date().toISOString();
+        const message = `Auto-sync: ${timestamp}`;
+        await window.electronAPI?.git.commit(message);
+      } else {
+        console.log('[AutoSync] No uncommitted changes, skipping commit');
       }
 
-      // Push changes
-      await window.electronAPI?.git.push();
+      // Pull first to get remote changes (only if we have unpushed commits or just committed)
+      if (hasUnpushedCommits || hasUncommittedChanges) {
+        try {
+          await window.electronAPI?.git.pull();
+          console.log('[AutoSync] Pulled successfully');
+        } catch (pullError) {
+          // If pull fails, it might be because the branch doesn't exist remotely yet
+          console.log('[AutoSync] Pull failed (might be first push):', pullError);
+        }
+
+        // Push changes
+        await window.electronAPI?.git.push();
+        console.log('[AutoSync] Pushed successfully');
+      }
 
       console.log('[AutoSync] Sync completed successfully');
       const now = new Date();

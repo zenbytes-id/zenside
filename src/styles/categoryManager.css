@@ -305,7 +305,22 @@
   gap: 8px;
 }
 
-.icon-picker,
+.icon-picker {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.12) 0%, rgba(0, 168, 204, 0.08) 100%);
+  border: 2px solid rgba(0, 212, 255, 0.3);
+  border-radius: 12px;
+  max-width: 100%;
+  max-height: 280px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-shadow: 0 8px 24px rgba(0, 212, 255, 0.25);
+  animation: fadeIn 0.2s ease-out;
+}
+
 .color-picker {
   display: flex;
   flex-wrap: wrap;
@@ -317,6 +332,25 @@
   max-width: 320px;
   box-shadow: 0 8px 24px rgba(0, 212, 255, 0.25);
   animation: fadeIn 0.2s ease-out;
+}
+
+/* Scrollbar styling for icon picker */
+.icon-picker::-webkit-scrollbar {
+  width: 6px;
+}
+
+.icon-picker::-webkit-scrollbar-track {
+  background: rgba(0, 212, 255, 0.08);
+  border-radius: 3px;
+}
+
+.icon-picker::-webkit-scrollbar-thumb {
+  background: rgba(0, 212, 255, 0.3);
+  border-radius: 3px;
+}
+
+.icon-picker::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 212, 255, 0.5);
 }
 
 @keyframes fadeIn {
@@ -331,19 +365,27 @@
 }
 
 .icon-option {
-  width: 40px;
-  height: 40px;
+  aspect-ratio: 1;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: auto;
   border: 2px solid rgba(0, 212, 255, 0.25);
   border-radius: 8px;
-  font-size: 20px;
+  font-size: 18px;
+  padding: 4px;
   cursor: pointer;
   background: linear-gradient(135deg, rgba(0, 212, 255, 0.08) 0%, rgba(0, 168, 204, 0.05) 100%);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 .icon-option:hover {
   background: linear-gradient(135deg, #00d4ff 0%, #00a8cc 100%);
-  transform: scale(1.2) rotate(5deg);
+  transform: scale(1.1);
   border-color: #00d4ff;
   box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
 }
@@ -421,7 +463,6 @@
     gap: 6px;
   }
 
-  .icon-picker,
   .color-picker {
     max-width: 100%;
   }

@@ -175,19 +175,171 @@ export const POCKET_COLORS = [
 ];
 
 /**
+ * Available category icons (same as pocket icons for consistency)
+ */
+export const CATEGORY_ICONS = [
+  // Money & Finance
+  '💰', // Money bag
+  '💵', // Dollar
+  '💳', // Credit card
+  '🏦', // Bank
+  '💎', // Gem
+  '🪙', // Coin
+
+  // Food & Drink
+  '🍔', // Food
+  '☕', // Coffee
+  '🍕', // Pizza
+  '🍜', // Ramen
+  '🥤', // Drink
+  '🍰', // Cake
+
+  // Transportation
+  '🚗', // Car
+  '✈️', // Plane
+  '🚲', // Bicycle
+  '🚌', // Bus
+  '🛵', // Scooter
+  '⛽', // Gas station
+
+  // Shopping & Items
+  '🛒', // Shopping cart
+  '🛍️', // Shopping bags
+  '📦', // Package
+  '🎁', // Gift
+  '👕', // Clothes
+  '👟', // Shoes
+
+  // Entertainment & Hobbies
+  '🎮', // Game
+  '🎬', // Movie
+  '🎵', // Music
+  '📚', // Books
+  '🎨', // Art
+  '⚽', // Sports
+
+  // Work & Study
+  '💼', // Briefcase
+  '📱', // Phone
+  '💻', // Laptop
+  '📝', // Note
+  '🎓', // Education
+  '🏢', // Office
+
+  // Home & Living
+  '🏠', // House
+  '🛏️', // Bed
+  '🔑', // Key
+  '💡', // Light
+  '🧺', // Laundry
+  '🪴', // Plant
+
+  // Health & Wellness
+  '💊', // Medicine
+  '❤️', // Health
+  '🏥', // Hospital
+  '💪', // Fitness
+  '🧘', // Yoga
+  '😊', // Happy
+
+  // Goals & Planning
+  '🎯', // Target
+  '⭐', // Star
+  '🏆', // Trophy
+  '📈', // Chart
+  '💫', // Sparkles
+  '🔥', // Fire
+
+  // Miscellaneous
+  '🌟', // Glowing star
+  '🎈', // Balloon
+  '🌈', // Rainbow
+  '☀️', // Sun
+  '🌙', // Moon
+  '⚡'  // Lightning
+];
+
+/**
  * Available pocket icons
  */
 export const POCKET_ICONS = [
+  // Money & Finance
   '💰', // Money bag
+  '💵', // Dollar
+  '💳', // Credit card
+  '🏦', // Bank
+  '💎', // Gem
+  '🪙', // Coin
+
+  // Food & Drink
   '🍔', // Food
-  '📦', // Package
-  '🎮', // Game
-  '💡', // Light
+  '☕', // Coffee
+  '🍕', // Pizza
+  '🍜', // Ramen
+  '🥤', // Drink
+  '🍰', // Cake
+
+  // Transportation
   '🚗', // Car
-  '🎁', // Gift
-  '💼', // Briefcase
-  '🏠', // House
   '✈️', // Plane
+  '🚲', // Bicycle
+  '🚌', // Bus
+  '🛵', // Scooter
+  '⛽', // Gas station
+
+  // Shopping & Items
+  '🛒', // Shopping cart
+  '🛍️', // Shopping bags
+  '📦', // Package
+  '🎁', // Gift
+  '👕', // Clothes
+  '👟', // Shoes
+
+  // Entertainment & Hobbies
+  '🎮', // Game
+  '🎬', // Movie
+  '🎵', // Music
+  '📚', // Books
+  '🎨', // Art
+  '⚽', // Sports
+
+  // Work & Study
+  '💼', // Briefcase
+  '📱', // Phone
+  '💻', // Laptop
+  '📝', // Note
+  '🎓', // Education
+  '🏢', // Office
+
+  // Home & Living
+  '🏠', // House
+  '🛏️', // Bed
+  '🔑', // Key
+  '💡', // Light
+  '🧺', // Laundry
+  '🪴', // Plant
+
+  // Health & Wellness
+  '💊', // Medicine
+  '❤️', // Health
+  '🏥', // Hospital
+  '💪', // Fitness
+  '🧘', // Yoga
+  '😊', // Happy
+
+  // Goals & Planning
   '🎯', // Target
-  '⭐'  // Star
+  '⭐', // Star
+  '🏆', // Trophy
+  '📈', // Chart
+  '💫', // Sparkles
+  '🔥', // Fire
+
+  // Miscellaneous
+  '🌟', // Glowing star
+  '🎈', // Balloon
+  '🌈', // Rainbow
+  '☀️', // Sun
+  '🌙', // Moon
+  '⚡'  // Lightning
 ];
