@@ -1,7 +1,7 @@
 {
   "name": "zenside",
   "productName": "ZenSide",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A lightweight macOS side panel for quick note-taking with GitHub sync",
   "main": ".webpack/main",
   "scripts": {
