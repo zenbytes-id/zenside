@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.3] - 2025-11-11
+
 ### Added
 - Panel visibility toggle in Settings → General to control whether panel shows on app startup
 - Configurable global keyboard shortcut to toggle panel show/hide
@@ -131,7 +133,8 @@ ZenSide is a dual-purpose macOS side panel application combining note-taking (Ze
 - Electron Forge for packaging and distribution
 - Code signing and notarization support for macOS
 
-[Unreleased]: https://github.com/zenbytes-id/zenside/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/zenbytes-id/zenside/compare/v1.0.3...HEAD
+[1.0.3]: https://github.com/zenbytes-id/zenside/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/zenbytes-id/zenside/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/zenbytes-id/zenside/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/zenbytes-id/zenside/releases/tag/v1.0.0
