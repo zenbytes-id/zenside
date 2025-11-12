@@ -238,7 +238,7 @@ export function useFinance() {
     const newPocket: Pocket = {
       ...pocket,
       id: uuidv4(),
-      balance: 0, // New pockets start with 0 balance
+      balance: pocket.openingBalance || 0, // Start with opening balance if set, otherwise 0
       order: maxOrder + 1, // Assign next order number
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -260,11 +260,16 @@ export function useFinance() {
    * Update a pocket
    */
   const updatePocket = useCallback(async (id: string, updates: Partial<Pocket>) => {
-    const updatedPockets = pockets.map(p =>
+    let updatedPockets = pockets.map(p =>
       p.id === id
         ? { ...p, ...updates, updatedAt: new Date().toISOString() }
         : p
     );
+
+    // If opening balance was changed, recalculate all balances
+    if (updates.openingBalance !== undefined) {
+      updatedPockets = await window.electronAPI?.finance.recalculateAllBalances(updatedPockets) || updatedPockets;
+    }
 
     setPockets(updatedPockets);
 

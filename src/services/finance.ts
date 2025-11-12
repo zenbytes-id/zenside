@@ -330,10 +330,13 @@ export class FinanceService {
   async recalculateAllBalances(pockets: Pocket[]): Promise<Pocket[]> {
     console.log('[FINANCE-SERVICE] Recalculating all balances...');
 
-    // Reset all balances
+    // Start with opening balances (if set), otherwise 0
     const updatedPockets = pockets.map(p => ({ ...p, balance: 0 }));
     const balanceMap: Record<string, number> = {};
-    pockets.forEach(p => balanceMap[p.id] = 0);
+    pockets.forEach(p => {
+      // Initialize with opening balance if set, otherwise 0
+      balanceMap[p.id] = p.openingBalance || 0;
+    });
 
     // Load all transaction files
     if (!this.summaryCache) {
@@ -357,7 +360,7 @@ export class FinanceService {
       }
     }
 
-    // Update pocket balances
+    // Update pocket balances with final calculated values
     updatedPockets.forEach(p => {
       p.balance = balanceMap[p.id] || 0;
     });

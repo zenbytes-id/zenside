@@ -482,7 +482,12 @@ ${packageJson.homepage}`,
     // CRITICAL: Set window level after creation to avoid activation
     // Use 'floating' level instead of alwaysOnTop to prevent dock activation
     this.edgeBar.setAlwaysOnTop(true, 'floating', 1);
-    this.edgeBar.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+    // Set visible on all workspaces WITHOUT switching when shown
+    // skipTransformProcessType prevents automatic desktop switching
+    this.edgeBar.setVisibleOnAllWorkspaces(true, {
+      visibleOnFullScreen: true,
+      skipTransformProcessType: true
+    });
     this.edgeBar.setIgnoreMouseEvents(false);
 
     // Show without activation - this is key to preventing dock icon
@@ -523,7 +528,12 @@ ${packageJson.homepage}`,
 
     // CRITICAL: Set these after window creation to avoid activation
     this.mainPanel.setAlwaysOnTop(true, 'floating', 1);
-    this.mainPanel.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+    // Set visible on all workspaces WITHOUT switching when shown
+    // skipTransformProcessType prevents automatic desktop switching
+    this.mainPanel.setVisibleOnAllWorkspaces(true, {
+      visibleOnFullScreen: true,
+      skipTransformProcessType: true
+    });
 
     // Load the main app
     this.mainPanel.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);

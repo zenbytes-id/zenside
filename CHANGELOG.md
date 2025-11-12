@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Opening balance support for pockets in ZenCash
+- Optional opening balance field when creating new pockets
+- Ability to edit opening balance for existing pockets
+- Opening balance date tracking to record when balance was set
+- Rupiah formatting for opening balance input fields with auto-formatting as user types
+- Balance calculation now includes opening balance (Opening Balance + Total Income - Total Expense + Net Transfers)
+
+### Changed
+- Expense Analysis modal: Category breakdown now displays in 2-line format with category name on first line and amount + percentage on second line
+- Expense Analysis modal: Reduced category breakdown max height from 400px to 300px for better visibility
+- Expense Analysis modal: Total Expenses amount now stays on single line without awkward wrapping
+- Pocket balance calculation now starts from opening balance (if set) instead of always starting from zero
+- Opening balance input uses consistent Rupiah formatting (Rp 1.000.000) matching transaction amount fields
+
+### Fixed
+- Critical: Panel now stays on current desktop when opened instead of switching to different desktop
+- Fixed multi-desktop support to prevent automatic workspace switching when showing panel
+- App now correctly respects macOS workspace boundaries without forcing desktop changes
+- Expense Analysis modal: Fixed text wrapper bug in Total Expenses card
+- Expense Analysis modal: Category breakdown is now properly scrollable with improved layout
+
 ## [1.0.3] - 2025-11-11
 
 ### Added

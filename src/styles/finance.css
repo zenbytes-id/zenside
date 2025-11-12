@@ -1646,18 +1646,23 @@
   background: linear-gradient(135deg, #2d3139 0%, #1a1d23 100%);
   border-radius: 12px;
   border: 1px solid #3d4149;
+  gap: 16px;
 }
 
 .chart-period {
   font-size: 16px;
   font-weight: 600;
   color: #e4e4e4;
+  flex-shrink: 1;
+  min-width: 0;
 }
 
 .chart-total {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  flex-shrink: 0;
+  min-width: 0;
 }
 
 .total-label {
@@ -1666,13 +1671,16 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 4px;
+  white-space: nowrap;
 }
 
 .total-amount {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: #ff6b6b;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  text-align: right;
 }
 
 .chart-container {
@@ -1781,8 +1789,9 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: 400px;
+  max-height: 300px;
   overflow-y: auto;
+  overflow-x: hidden;
   padding-right: 4px;
 }
 
@@ -1807,8 +1816,8 @@
 
 .legend-item {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 8px;
   padding: 12px 14px;
   background: #2d3139;
   border-radius: 8px;
@@ -1835,6 +1844,7 @@
   gap: 10px;
   flex: 1;
   min-width: 0;
+  width: 100%;
 }
 
 .legend-rank {
@@ -1877,8 +1887,10 @@
 .legend-right {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
-  flex-shrink: 0;
+  width: 100%;
+  padding-left: 40px;
 }
 
 .legend-amount {
@@ -1886,19 +1898,18 @@
   font-weight: 700;
   color: #ff6b6b;
   font-variant-numeric: tabular-nums;
-  min-width: 80px;
-  text-align: right;
+  flex: 1;
+  text-align: left;
 }
 
 .legend-percentage {
   font-size: 13px;
   font-weight: 700;
   color: #00d4ff;
-  min-width: 45px;
-  text-align: right;
   background: #00d4ff11;
-  padding: 4px 8px;
+  padding: 4px 10px;
   border-radius: 4px;
+  flex-shrink: 0;
 }
 
 /* View Chart Button in Summary */

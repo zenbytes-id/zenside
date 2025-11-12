@@ -16,6 +16,8 @@ export const AddPocketDialog: React.FC<AddPocketDialogProps> = ({
   const [name, setName] = useState('');
   const [icon, setIcon] = useState(POCKET_ICONS[0]);
   const [color, setColor] = useState(POCKET_COLORS[0]);
+  const [openingBalance, setOpeningBalance] = useState('');
+  const [displayOpeningBalance, setDisplayOpeningBalance] = useState('');
 
   // Reset form when modal opens
   useEffect(() => {
@@ -23,8 +25,26 @@ export const AddPocketDialog: React.FC<AddPocketDialogProps> = ({
       setName('');
       setIcon(POCKET_ICONS[0]);
       setColor(POCKET_COLORS[0]);
+      setOpeningBalance('');
+      setDisplayOpeningBalance('');
     }
   }, [isOpen]);
+
+  // Format number to Rupiah display format
+  const formatRupiah = (value: string): string => {
+    const numbers = value.replace(/\D/g, '');
+    if (!numbers) return '';
+    const formatted = parseInt(numbers).toLocaleString('id-ID');
+    return `Rp ${formatted}`;
+  };
+
+  // Handle opening balance input change
+  const handleOpeningBalanceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    const numbers = inputValue.replace(/\D/g, '');
+    setOpeningBalance(numbers);
+    setDisplayOpeningBalance(numbers ? formatRupiah(numbers) : '');
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,17 +59,31 @@ export const AddPocketDialog: React.FC<AddPocketDialogProps> = ({
       return;
     }
 
+    // Parse opening balance
+    const parsedBalance = openingBalance.trim() ? parseFloat(openingBalance.replace(/[^\d.-]/g, '')) : undefined;
+
+    if (parsedBalance !== undefined && (isNaN(parsedBalance) || parsedBalance < 0)) {
+      alert('Opening balance must be a valid positive number');
+      return;
+    }
+
     onSubmit({
       name: name.trim(),
       icon,
       color,
-      isDefault: false
+      isDefault: false,
+      ...(parsedBalance !== undefined && {
+        openingBalance: parsedBalance,
+        openingBalanceDate: new Date().toISOString()
+      })
     });
 
     // Reset form
     setName('');
     setIcon(POCKET_ICONS[0]);
     setColor(POCKET_COLORS[0]);
+    setOpeningBalance('');
+    setDisplayOpeningBalance('');
     onClose();
   };
 
@@ -78,6 +112,24 @@ export const AddPocketDialog: React.FC<AddPocketDialogProps> = ({
               required
             />
             <div className="form-hint">{name.length}/30 characters</div>
+          </div>
+
+          {/* Opening Balance Input */}
+          <div className="form-group">
+            <label className="form-label" htmlFor="openingBalance">
+              Opening Balance <span style={{ opacity: 0.6, fontWeight: 'normal' }}>(optional)</span>
+            </label>
+            <input
+              id="openingBalance"
+              type="text"
+              className="form-input"
+              value={displayOpeningBalance}
+              onChange={handleOpeningBalanceChange}
+              placeholder="Rp 0"
+            />
+            <div className="form-hint">
+              Starting balance before first transaction. Leave empty for Rp 0
+            </div>
           </div>
 
           {/* Icon Picker */}
@@ -123,7 +175,7 @@ export const AddPocketDialog: React.FC<AddPocketDialogProps> = ({
                 <div className="pocket-info">
                   <div className="pocket-name">{name || 'Pocket Name'}</div>
                   <div className="pocket-balance" style={{ color: color }}>
-                    Rp 0
+                    Rp {openingBalance ? parseInt(openingBalance).toLocaleString('id-ID') : '0'}
                   </div>
                 </div>
               </div>

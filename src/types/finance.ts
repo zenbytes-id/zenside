@@ -10,6 +10,8 @@ export interface Pocket {
   order: number;           // Display order (0 is first)
   createdAt: string;       // ISO date string
   updatedAt: string;       // ISO date string
+  openingBalance?: number; // Optional starting balance before first transaction
+  openingBalanceDate?: string; // ISO date string when opening balance was set
 }
 
 export interface Transaction {

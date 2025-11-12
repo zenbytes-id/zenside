@@ -18,7 +18,25 @@ export const EditPocketDialog: React.FC<EditPocketDialogProps> = ({
   const [name, setName] = useState('');
   const [icon, setIcon] = useState(POCKET_ICONS[0]);
   const [color, setColor] = useState(POCKET_COLORS[0]);
+  const [openingBalance, setOpeningBalance] = useState('');
+  const [displayOpeningBalance, setDisplayOpeningBalance] = useState('');
   const [isInitializing, setIsInitializing] = useState(true);
+
+  // Format number to Rupiah display format
+  const formatRupiah = (value: string): string => {
+    const numbers = value.replace(/\D/g, '');
+    if (!numbers) return '';
+    const formatted = parseInt(numbers).toLocaleString('id-ID');
+    return `Rp ${formatted}`;
+  };
+
+  // Handle opening balance input change
+  const handleOpeningBalanceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    const numbers = inputValue.replace(/\D/g, '');
+    setOpeningBalance(numbers);
+    setDisplayOpeningBalance(numbers ? formatRupiah(numbers) : '');
+  };
 
   // Update form when pocket changes
   useEffect(() => {
@@ -29,6 +47,9 @@ export const EditPocketDialog: React.FC<EditPocketDialogProps> = ({
         setName(pocket.name);
         setIcon(pocket.icon);
         setColor(pocket.color);
+        const balanceStr = pocket.openingBalance?.toString() || '';
+        setOpeningBalance(balanceStr);
+        setDisplayOpeningBalance(balanceStr ? formatRupiah(balanceStr) : '');
         setIsInitializing(false);
       }, 150);
       return () => clearTimeout(timer);
@@ -52,10 +73,25 @@ export const EditPocketDialog: React.FC<EditPocketDialogProps> = ({
       return;
     }
 
+    // Parse opening balance
+    const parsedBalance = openingBalance.trim() ? parseFloat(openingBalance.replace(/[^\d.-]/g, '')) : undefined;
+
+    if (parsedBalance !== undefined && (isNaN(parsedBalance) || parsedBalance < 0)) {
+      alert('Opening balance must be a valid positive number');
+      return;
+    }
+
+    // Check if opening balance changed
+    const openingBalanceChanged = parsedBalance !== pocket.openingBalance;
+
     onSubmit(pocket.id, {
       name: name.trim(),
       icon,
-      color
+      color,
+      ...(openingBalanceChanged && {
+        openingBalance: parsedBalance,
+        openingBalanceDate: parsedBalance !== undefined ? new Date().toISOString() : undefined
+      })
     });
 
     onClose();
@@ -99,6 +135,24 @@ export const EditPocketDialog: React.FC<EditPocketDialogProps> = ({
               required
             />
             <div className="form-hint">{name.length}/30 characters</div>
+          </div>
+
+          {/* Opening Balance Input */}
+          <div className="form-group">
+            <label className="form-label" htmlFor="openingBalance">
+              Opening Balance <span style={{ opacity: 0.6, fontWeight: 'normal' }}>(optional)</span>
+            </label>
+            <input
+              id="openingBalance"
+              type="text"
+              className="form-input"
+              value={displayOpeningBalance}
+              onChange={handleOpeningBalanceChange}
+              placeholder="Rp 0"
+            />
+            <div className="form-hint">
+              Starting balance before first transaction. Current balance will be recalculated
+            </div>
           </div>
 
           {/* Icon Picker */}
