@@ -50,6 +50,8 @@ export const FinanceView: React.FC<FinanceViewProps> = ({ syncDirectory, onOpenS
   const [dateFilter, setDateFilter] = useState<'all' | 'week' | 'month' | 'year'>('all');
   const [typeFilter, setTypeFilter] = useState<'all' | 'income' | 'expense' | 'transfer'>('all');
   const [showFilters, setShowFilters] = useState(false);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [isSearchAnimating, setIsSearchAnimating] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [loadedMonths, setLoadedMonths] = useState<Set<string>>(new Set());
   const [showAddMenu, setShowAddMenu] = useState(false);
@@ -64,6 +66,22 @@ export const FinanceView: React.FC<FinanceViewProps> = ({ syncDirectory, onOpenS
 
   // Calculate active filter count
   const activeFiltersCount = (dateFilter !== 'all' ? 1 : 0) + (typeFilter !== 'all' ? 1 : 0);
+
+  // Handle search toggle with animation
+  const handleSearchToggle = () => {
+    if (isSearchExpanded && !isSearchAnimating) {
+      // Start collapse animation
+      setIsSearchAnimating(true);
+      setIsSearchExpanded(false);
+      // Wait for animation to complete before fully hiding
+      setTimeout(() => {
+        setIsSearchAnimating(false);
+      }, 300); // Match animation duration
+    } else if (!isSearchExpanded && !isSearchAnimating) {
+      // Expand immediately
+      setIsSearchExpanded(true);
+    }
+  };
 
   // Helper function to display balance as hidden or visible
   const formatBalance = (amount: number) => {
@@ -300,39 +318,6 @@ export const FinanceView: React.FC<FinanceViewProps> = ({ syncDirectory, onOpenS
         </div>
       </div>
 
-      {/* Search Bar */}
-      <div className="search-bar">
-        <div className="search-input-wrapper">
-          <FiSearch className="search-icon" size={16} />
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Search transactions..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          {searchQuery && (
-            <button
-              className="search-clear"
-              onClick={() => setSearchQuery('')}
-              title="Clear search"
-            >
-              <FiX size={18} />
-            </button>
-          )}
-          <button
-            className="btn-filter"
-            onClick={() => setShowFilters(true)}
-            title="Filter transactions"
-          >
-            <FiFilter size={16} />
-            {activeFiltersCount > 0 && (
-              <span className="filter-badge">{activeFiltersCount}</span>
-            )}
-          </button>
-        </div>
-      </div>
-
       <div className="finance-view">
 
       {/* Summary Widget */}
@@ -475,14 +460,59 @@ export const FinanceView: React.FC<FinanceViewProps> = ({ syncDirectory, onOpenS
       <div className="transactions-section">
         <div className="transactions-header">
           <h3>Recent Transactions</h3>
-          <button
-            className="btn-add-transaction-quick"
-            onClick={() => setShowAddTransaction(true)}
-            title="Add transaction"
-          >
-            <FiPlus size={18} />
-          </button>
+          <div className="transactions-header-actions">
+            <button
+              className="btn-icon"
+              onClick={handleSearchToggle}
+              title="Search transactions"
+            >
+              <FiSearch size={18} />
+            </button>
+            <button
+              className="btn-add-transaction-quick"
+              onClick={() => setShowAddTransaction(true)}
+              title="Add transaction"
+            >
+              <FiPlus size={18} />
+            </button>
+          </div>
         </div>
+
+        {/* Collapsible Search Bar */}
+        {(isSearchExpanded || isSearchAnimating) && (
+          <div className={`search-bar ${!isSearchExpanded && isSearchAnimating ? 'search-bar-collapsing' : ''}`}>
+            <div className="search-input-wrapper">
+              <FiSearch className="search-icon" size={16} />
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Search transactions..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                autoFocus
+              />
+              {searchQuery && (
+                <button
+                  className="search-clear"
+                  onClick={() => setSearchQuery('')}
+                  title="Clear search"
+                >
+                  <FiX size={18} />
+                </button>
+              )}
+              <button
+                className="btn-filter"
+                onClick={() => setShowFilters(true)}
+                title="Filter transactions"
+              >
+                <FiFilter size={16} />
+                {activeFiltersCount > 0 && (
+                  <span className="filter-badge">{activeFiltersCount}</span>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
         {transactions.length === 0 ? (
           <div className="empty-state">
             <p>No transactions yet</p>

@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- ZenCash transaction search UI/UX improved with collapsible search bar
+- Search icon moved to Recent Transactions header for better contextual placement
+- Search bar now hidden by default and expands with smooth slide-down animation when search icon is clicked
+- Search bar collapses with smooth slide-up animation when search icon is clicked again
+- Improved visual hierarchy by placing search functionality directly next to transaction list
+
 ### Fixed
 - Git integration in ZenCash now correctly updates status when transactions are added, updated, or deleted
 - Git status indicator now properly shows uncommitted changes after pocket operations (add, update, reorder)
