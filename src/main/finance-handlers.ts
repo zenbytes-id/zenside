@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron';
+import { ipcMain, BrowserWindow } from 'electron';
 import { financeService } from '../services/finance';
 import { Transaction, Pocket, Category, FinanceSummary } from '../types/finance';
 
@@ -68,6 +68,13 @@ export function registerFinanceHandlers(): void {
     console.log('[Finance Handlers] finance:addTransaction called');
     try {
       await financeService.addTransaction(transaction);
+
+      // Notify all windows about file change for git status update
+      BrowserWindow.getAllWindows().forEach(win => {
+        if (!win.isDestroyed()) {
+          win.webContents.send('fs:fileChanged', { type: 'note', action: 'change' });
+        }
+      });
     } catch (error) {
       console.error('[Finance Handlers] Error adding transaction:', error);
       throw error;
@@ -79,6 +86,13 @@ export function registerFinanceHandlers(): void {
     console.log('[Finance Handlers] finance:updateTransaction called');
     try {
       await financeService.updateTransaction(oldTransaction, newTransaction);
+
+      // Notify all windows about file change for git status update
+      BrowserWindow.getAllWindows().forEach(win => {
+        if (!win.isDestroyed()) {
+          win.webContents.send('fs:fileChanged', { type: 'note', action: 'change' });
+        }
+      });
     } catch (error) {
       console.error('[Finance Handlers] Error updating transaction:', error);
       throw error;
@@ -90,6 +104,13 @@ export function registerFinanceHandlers(): void {
     console.log('[Finance Handlers] finance:deleteTransaction called');
     try {
       await financeService.deleteTransaction(transaction);
+
+      // Notify all windows about file change for git status update
+      BrowserWindow.getAllWindows().forEach(win => {
+        if (!win.isDestroyed()) {
+          win.webContents.send('fs:fileChanged', { type: 'note', action: 'unlink' });
+        }
+      });
     } catch (error) {
       console.error('[Finance Handlers] Error deleting transaction:', error);
       throw error;
@@ -134,6 +155,13 @@ export function registerFinanceHandlers(): void {
     console.log('[Finance Handlers] finance:savePockets called with count:', pockets.length);
     try {
       await financeService.savePockets(pockets);
+
+      // Notify all windows about file change for git status update
+      BrowserWindow.getAllWindows().forEach(win => {
+        if (!win.isDestroyed()) {
+          win.webContents.send('fs:fileChanged', { type: 'note', action: 'change' });
+        }
+      });
     } catch (error) {
       console.error('[Finance Handlers] Error saving pockets:', error);
       throw error;
@@ -156,6 +184,13 @@ export function registerFinanceHandlers(): void {
     console.log('[Finance Handlers] finance:saveCategories called with count:', categories.length);
     try {
       await financeService.saveCategories(categories);
+
+      // Notify all windows about file change for git status update
+      BrowserWindow.getAllWindows().forEach(win => {
+        if (!win.isDestroyed()) {
+          win.webContents.send('fs:fileChanged', { type: 'note', action: 'change' });
+        }
+      });
     } catch (error) {
       console.error('[Finance Handlers] Error saving categories:', error);
       throw error;

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Git integration in ZenCash now correctly updates status when transactions are added, updated, or deleted
+- Git status indicator now properly shows uncommitted changes after pocket operations (add, update, reorder)
+- Finance file changes now trigger git status refresh consistently with ZenNote behavior
+
 ## [1.0.4] - 2025-11-12
 
 ### Added
