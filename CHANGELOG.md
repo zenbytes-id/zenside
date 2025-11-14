@@ -7,12 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Bills/Tagihan** - Monthly recurring payment tracking in ZenCash
+- Create bills with custom name, amount, category, and deadline date (1-31)
+- Payment status tracking with floating badges (paid, overdue, upcoming, today)
+- Countdown warnings for bills approaching deadline (shows days remaining in compact format: "3d", "-2d")
+- Overdue alerts for unpaid bills past deadline date with negative day counter
+- Horizontal scrollable bill list UI matching pockets design for consistency
+- Total bills amount display in header to see monthly obligations at a glance
+- Pay bill action that creates expense transaction and links to bill payment record
+- Edit bill details including amount, category, deadline, icon, and color
+- Drag-and-drop reordering of bills in manage bills dialog
+- Bill payment history tracking linked to transactions
+- Compact inline empty state for bills section
+- Bill icons and colors customization (72 emoji icons, 8 colors)
+- Bills stored in `finance/bills.json` with payment records
+- Git integration with auto-commit for bill operations
+
 ### Changed
 - ZenCash transaction search UI/UX improved with collapsible search bar
 - Search icon moved to Recent Transactions header for better contextual placement
 - Search bar now hidden by default and expands with smooth slide-down animation when search icon is clicked
 - Search bar collapses with smooth slide-up animation when search icon is clicked again
 - Improved visual hierarchy by placing search functionality directly next to transaction list
+- Bills section positioned between Pockets and Recent Transactions for better workflow
+- Bill empty state uses single-line layout with inline "Add Bill" button
+- Bill cards redesigned with vertical layout to prevent text wrapping
+- Bill status badges now float in top-right corner with semi-transparent colored backgrounds
+- Bill card width fixed at 200px for consistent horizontal scrolling
+- Bill status text simplified with abbreviations (e.g., "3d" instead of "3 days left") with full text in tooltips
 
 ### Fixed
 - Git integration in ZenCash now correctly updates status when transactions are added, updated, or deleted

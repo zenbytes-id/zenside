@@ -11,7 +11,10 @@ import {
   MonthlyStats,
   PocketSummary,
   PaginatedTransactions,
-  TransactionFilters
+  TransactionFilters,
+  Bill,
+  BillPayment,
+  BillsData
 } from '../types/finance';
 
 export class FinanceService {
@@ -570,6 +573,174 @@ export class FinanceService {
 
     await this.saveSummary();
     console.log('[FINANCE-SERVICE] Summary rebuilt');
+  }
+
+  // ========== BILL MANAGEMENT ==========
+
+  /**
+   * Get bills file path
+   */
+  private getBillsFilePath(): string {
+    if (!this.financeDirectory) {
+      throw new Error('Finance service not initialized');
+    }
+    return path.join(this.financeDirectory, 'bills.json');
+  }
+
+  /**
+   * Load bills data from file
+   */
+  async loadBills(): Promise<BillsData> {
+    const filePath = this.getBillsFilePath();
+
+    try {
+      const content = await fs.readFile(filePath, 'utf-8');
+      const data: BillsData = JSON.parse(content);
+      console.log('[FINANCE-SERVICE] Bills loaded:', data.bills.length);
+      return data;
+    } catch (error) {
+      // If file doesn't exist, return empty data
+      if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
+        console.log('[FINANCE-SERVICE] No bills file found, creating new one');
+        const emptyData: BillsData = {
+          version: '1.0',
+          lastUpdated: new Date().toISOString(),
+          bills: [],
+          payments: []
+        };
+        await this.saveBills(emptyData);
+        return emptyData;
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Save bills data to file
+   */
+  async saveBills(data: BillsData): Promise<void> {
+    const filePath = this.getBillsFilePath();
+    data.lastUpdated = new Date().toISOString();
+    await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
+    console.log('[FINANCE-SERVICE] Bills saved:', data.bills.length);
+  }
+
+  /**
+   * Add a new bill
+   */
+  async addBill(bill: Bill): Promise<void> {
+    const data = await this.loadBills();
+    data.bills.push(bill);
+    await this.saveBills(data);
+  }
+
+  /**
+   * Update a bill
+   */
+  async updateBill(updatedBill: Bill): Promise<void> {
+    const data = await this.loadBills();
+    const index = data.bills.findIndex(b => b.id === updatedBill.id);
+    if (index !== -1) {
+      data.bills[index] = updatedBill;
+      await this.saveBills(data);
+    } else {
+      throw new Error('Bill not found');
+    }
+  }
+
+  /**
+   * Delete a bill and its payment history
+   */
+  async deleteBill(billId: string): Promise<void> {
+    const data = await this.loadBills();
+    data.bills = data.bills.filter(b => b.id !== billId);
+    // Also remove all payments for this bill
+    data.payments = data.payments.filter(p => p.billId !== billId);
+    await this.saveBills(data);
+  }
+
+  /**
+   * Reorder bills
+   */
+  async reorderBills(bills: Bill[]): Promise<void> {
+    const data = await this.loadBills();
+    data.bills = bills;
+    await this.saveBills(data);
+  }
+
+  /**
+   * Pay a bill - creates transaction and payment record
+   */
+  async payBill(
+    billId: string,
+    pocketId: string,
+    amount: number,
+    date: string,
+    description: string
+  ): Promise<{ transaction: Transaction; payment: BillPayment }> {
+    const data = await this.loadBills();
+    const bill = data.bills.find(b => b.id === billId);
+
+    if (!bill) {
+      throw new Error('Bill not found');
+    }
+
+    // Create transaction
+    const transaction: Transaction = {
+      id: this.generateId(),
+      type: 'expense',
+      amount,
+      date,
+      description,
+      categoryId: bill.categoryId,
+      pocketId,
+      createdAt: new Date().toISOString()
+    };
+
+    // Add transaction
+    await this.addTransaction(transaction);
+
+    // Create payment record
+    const monthKey = this.getMonthKey(date);
+    const payment: BillPayment = {
+      id: this.generateId(),
+      billId,
+      month: monthKey,
+      transactionId: transaction.id,
+      paidAt: new Date().toISOString()
+    };
+
+    data.payments.push(payment);
+    await this.saveBills(data);
+
+    return { transaction, payment };
+  }
+
+  /**
+   * Get payment status for a bill in a specific month
+   */
+  async getBillPaymentStatus(billId: string, monthKey: string): Promise<BillPayment | null> {
+    const data = await this.loadBills();
+    return data.payments.find(p => p.billId === billId && p.month === monthKey) || null;
+  }
+
+  /**
+   * Get all payments for a bill
+   */
+  async getBillPaymentHistory(billId: string): Promise<BillPayment[]> {
+    const data = await this.loadBills();
+    return data.payments.filter(p => p.billId === billId);
+  }
+
+  /**
+   * Generate UUID (simple implementation)
+   */
+  private generateId(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0;
+      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
   }
 }
 

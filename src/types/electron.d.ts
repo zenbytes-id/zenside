@@ -1,5 +1,5 @@
 import { Note, Folder } from './note';
-import { Transaction, Pocket, Category } from './finance';
+import { Transaction, Pocket, Category, Bill, BillPayment, BillsData } from './finance';
 
 // Git types from simple-git
 export interface GitStatusResult {
@@ -101,6 +101,15 @@ declare global {
       savePockets: (pockets: Pocket[]) => Promise<void>;
       loadCategories: () => Promise<Category[]>;
       saveCategories: (categories: Category[]) => Promise<void>;
+      // Bill operations
+      loadBills: () => Promise<BillsData>;
+      addBill: (bill: Bill) => Promise<void>;
+      updateBill: (bill: Bill) => Promise<void>;
+      deleteBill: (billId: string) => Promise<void>;
+      reorderBills: (bills: Bill[]) => Promise<void>;
+      payBill: (billId: string, pocketId: string, amount: number, date: string, description: string) => Promise<{ transaction: Transaction; payment: BillPayment }>;
+      getBillPaymentStatus: (billId: string, monthKey: string) => Promise<BillPayment | null>;
+      getBillPaymentHistory: (billId: string) => Promise<BillPayment[]>;
     };
     settings: {
       getShowPanelOnStartup: () => Promise<boolean>;

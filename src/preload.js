@@ -95,7 +95,16 @@ contextBridge.exposeInMainWorld('electronAPI', {
     loadPockets: () => ipcRenderer.invoke('finance:loadPockets'),
     savePockets: (pockets) => ipcRenderer.invoke('finance:savePockets', pockets),
     loadCategories: () => ipcRenderer.invoke('finance:loadCategories'),
-    saveCategories: (categories) => ipcRenderer.invoke('finance:saveCategories', categories)
+    saveCategories: (categories) => ipcRenderer.invoke('finance:saveCategories', categories),
+    // Bill operations
+    loadBills: () => ipcRenderer.invoke('finance:loadBills'),
+    addBill: (bill) => ipcRenderer.invoke('finance:addBill', bill),
+    updateBill: (bill) => ipcRenderer.invoke('finance:updateBill', bill),
+    deleteBill: (billId) => ipcRenderer.invoke('finance:deleteBill', billId),
+    reorderBills: (bills) => ipcRenderer.invoke('finance:reorderBills', bills),
+    payBill: (billId, pocketId, amount, date, description) => ipcRenderer.invoke('finance:payBill', billId, pocketId, amount, date, description),
+    getBillPaymentStatus: (billId, monthKey) => ipcRenderer.invoke('finance:getBillPaymentStatus', billId, monthKey),
+    getBillPaymentHistory: (billId) => ipcRenderer.invoke('finance:getBillPaymentHistory', billId)
   },
 
   // App settings

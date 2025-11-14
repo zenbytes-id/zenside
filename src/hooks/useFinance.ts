@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { Transaction, Pocket, Category } from '../types/finance';
+import { Transaction, Pocket, Category, Bill, BillPayment, BillsData } from '../types/finance';
 import { DEFAULT_CATEGORIES, createDefaultMainPocket } from '../constants/financeDefaults';
 import { recalculatePocketBalances } from '../utils/financeCalculations';
 
@@ -8,6 +8,8 @@ export function useFinance() {
   const [pockets, setPockets] = useState<Pocket[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [categories, setCategories] = useState<Category[]>(DEFAULT_CATEGORIES);
+  const [bills, setBills] = useState<Bill[]>([]);
+  const [billPayments, setBillPayments] = useState<BillPayment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
   const [availableMonths, setAvailableMonths] = useState<string[]>([]);
@@ -56,10 +58,11 @@ export function useFinance() {
       setAvailableMonths(months);
 
       // Load data
-      const [loadedPockets, recentTransactions, loadedCategories] = await Promise.all([
+      const [loadedPockets, recentTransactions, loadedCategories, billsData] = await Promise.all([
         window.electronAPI?.finance.loadPockets() || [],
         window.electronAPI?.finance.loadRecentTransactions(2) || [], // Load last 3 months
-        window.electronAPI?.finance.loadCategories() || []
+        window.electronAPI?.finance.loadCategories() || [],
+        window.electronAPI?.finance.loadBills() || { version: '1.0', lastUpdated: new Date().toISOString(), bills: [], payments: [] }
       ]);
 
       // If no pockets exist, create default main pocket
@@ -97,6 +100,10 @@ export function useFinance() {
       } else {
         setCategories(loadedCategories);
       }
+
+      // Set bills and payments
+      setBills(billsData.bills);
+      setBillPayments(billsData.payments);
 
       setIsInitialized(true);
     } catch (error) {
@@ -347,11 +354,150 @@ export function useFinance() {
     return await window.electronAPI?.finance.getSummary();
   }, []);
 
+  // ========== BILL MANAGEMENT ==========
+
+  /**
+   * Reload bills from filesystem
+   */
+  const reloadBills = useCallback(async () => {
+    try {
+      const billsData = await window.electronAPI?.finance.loadBills() || { version: '1.0', lastUpdated: new Date().toISOString(), bills: [], payments: [] };
+      setBills(billsData.bills);
+      setBillPayments(billsData.payments);
+    } catch (error) {
+      console.error('Error reloading bills:', error);
+    }
+  }, []);
+
+  /**
+   * Add a new bill
+   */
+  const addBill = useCallback(async (bill: Omit<Bill, 'id' | 'order' | 'createdAt' | 'updatedAt'>) => {
+    // Calculate the next order number (higher = first)
+    const maxOrder = bills.length > 0 ? Math.max(...bills.map(b => b.order)) : -1;
+
+    const newBill: Bill = {
+      ...bill,
+      id: uuidv4(),
+      order: maxOrder + 1,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    await window.electronAPI?.finance.addBill(newBill);
+    setBills(prev => [...prev, newBill]);
+
+    // Schedule git commit
+    scheduleGitCommit(`Add bill: ${bill.name}`);
+
+    return newBill;
+  }, [bills, scheduleGitCommit]);
+
+  /**
+   * Update a bill
+   */
+  const updateBill = useCallback(async (id: string, updates: Partial<Bill>) => {
+    const updatedBills = bills.map(b =>
+      b.id === id
+        ? { ...b, ...updates, updatedAt: new Date().toISOString() }
+        : b
+    );
+
+    const updatedBill = updatedBills.find(b => b.id === id);
+    if (updatedBill) {
+      await window.electronAPI?.finance.updateBill(updatedBill);
+      setBills(updatedBills);
+
+      // Schedule git commit
+      scheduleGitCommit(`Update bill: ${id}`);
+    }
+  }, [bills, scheduleGitCommit]);
+
+  /**
+   * Delete a bill
+   */
+  const deleteBill = useCallback(async (id: string) => {
+    await window.electronAPI?.finance.deleteBill(id);
+    setBills(prev => prev.filter(b => b.id !== id));
+    setBillPayments(prev => prev.filter(p => p.billId !== id));
+
+    // Schedule git commit
+    scheduleGitCommit(`Delete bill: ${id}`);
+  }, [scheduleGitCommit]);
+
+  /**
+   * Reorder bills
+   */
+  const reorderBills = useCallback(async (reorderedBills: Bill[]) => {
+    setBills(reorderedBills);
+    await window.electronAPI?.finance.reorderBills(reorderedBills);
+
+    // Schedule git commit
+    scheduleGitCommit('Reorder bills');
+  }, [scheduleGitCommit]);
+
+  /**
+   * Pay a bill
+   */
+  const payBill = useCallback(async (
+    billId: string,
+    pocketId: string,
+    amount: number,
+    date: string,
+    description: string
+  ) => {
+    const result = await window.electronAPI?.finance.payBill(billId, pocketId, amount, date, description);
+
+    if (result) {
+      // Update local state
+      setTransactions(prev => [result.transaction, ...prev].sort((a, b) => {
+        const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime();
+        if (dateDiff !== 0) return dateDiff;
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }));
+
+      setBillPayments(prev => [...prev, result.payment]);
+
+      // Recalculate pocket balances
+      const updatedPockets = await window.electronAPI?.finance.recalculateAllBalances(pockets) || pockets;
+      setPockets(updatedPockets);
+
+      // Schedule git commit
+      const bill = bills.find(b => b.id === billId);
+      scheduleGitCommit(`Pay bill: ${bill?.name || billId}`);
+
+      return result;
+    }
+  }, [pockets, bills, scheduleGitCommit]);
+
+  /**
+   * Get payment status for a bill in a specific month
+   */
+  const getBillPaymentStatus = useCallback((billId: string, monthKey: string): BillPayment | null => {
+    return billPayments.find(p => p.billId === billId && p.month === monthKey) || null;
+  }, [billPayments]);
+
+  /**
+   * Get payment history for a bill
+   */
+  const getBillPaymentHistory = useCallback((billId: string): BillPayment[] => {
+    return billPayments.filter(p => p.billId === billId);
+  }, [billPayments]);
+
+  /**
+   * Get bill by ID
+   */
+  const getBillById = useCallback((id: string): Bill | undefined => {
+    return bills.find(b => b.id === id);
+  }, [bills]);
+
   return {
     // State
     pockets,
     transactions,
     categories,
+    bills,
+    billPayments,
     isLoading,
     isInitialized,
     availableMonths,
@@ -367,10 +513,21 @@ export function useFinance() {
     reorderPockets,
     loadTransactionsByMonth,
 
+    // Bill actions
+    addBill,
+    updateBill,
+    deleteBill,
+    reorderBills,
+    payBill,
+    reloadBills,
+
     // Helpers
     getTransactionsForPocket,
     getCategoryById,
     getPocketById,
-    getSummary
+    getSummary,
+    getBillPaymentStatus,
+    getBillPaymentHistory,
+    getBillById
   };
 }

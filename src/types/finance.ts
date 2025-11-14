@@ -100,3 +100,34 @@ export interface PaginatedTransactions {
   hasMore: boolean;
   month: string; // "YYYY-MM"
 }
+
+// Bill/Tagihan recurring payment
+export interface Bill {
+  id: string;              // UUID
+  name: string;            // "Listrik", "Internet", "Cicilan Motor"
+  amount: number;          // Nominal tagihan default
+  categoryId: string;      // Reference to expense Category
+  deadlineDate: number;    // Day of month (1-31)
+  color: string;           // Hex color for UI
+  icon: string;            // Emoji icon
+  order: number;           // Display order (higher = first)
+  createdAt: string;       // ISO date string
+  updatedAt: string;       // ISO date string
+}
+
+// Payment record for a specific bill in a specific month
+export interface BillPayment {
+  id: string;              // UUID
+  billId: string;          // Reference to Bill
+  month: string;           // "YYYY-MM"
+  transactionId: string;   // Reference to Transaction (expense)
+  paidAt: string;          // ISO date string when paid
+}
+
+// JSON file structure for bills
+export interface BillsData {
+  version: string;
+  lastUpdated: string;
+  bills: Bill[];
+  payments: BillPayment[]; // All payment records
+}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Pocket, Transaction } from '../../types/finance';
+import { Pocket, Transaction, Bill } from '../../types/finance';
 import { useFinance } from '../../hooks/useFinance';
 import { formatCurrency } from '../../utils/dateFormatting';
 import { calculateTotalBalance, calculateMonthlyIncome, calculateMonthlyExpense } from '../../utils/financeCalculations';
@@ -9,6 +9,11 @@ import { AddPocketDialog } from './AddPocketDialog';
 import { EditPocketDialog } from './EditPocketDialog';
 import { ManagePocketsDialog } from './ManagePocketsDialog';
 import { ExpenseChartDialog } from './ExpenseChartDialog';
+import { BillCarousel } from './BillCarousel';
+import { PayBillModal } from './PayBillModal';
+import { AddBillDialog } from './AddBillDialog';
+import { EditBillDialog } from './EditBillDialog';
+import { ManageBillsDialog } from './ManageBillsDialog';
 import { FiSearch, FiSettings, FiPlus, FiX, FiFilter, FiList, FiPieChart, FiChevronDown, FiChevronUp, FiEye, FiEyeOff } from 'react-icons/fi';
 
 interface FinanceViewProps {
@@ -21,6 +26,8 @@ export const FinanceView: React.FC<FinanceViewProps> = ({ syncDirectory, onOpenS
     pockets,
     transactions,
     categories,
+    bills,
+    billPayments,
     isLoading,
     isInitialized,
     availableMonths,
@@ -32,6 +39,11 @@ export const FinanceView: React.FC<FinanceViewProps> = ({ syncDirectory, onOpenS
     updatePocket,
     deletePocket,
     reorderPockets,
+    addBill,
+    updateBill,
+    deleteBill,
+    reorderBills,
+    payBill,
     getTransactionsForPocket,
     getCategoryById,
     getPocketById,
@@ -44,8 +56,13 @@ export const FinanceView: React.FC<FinanceViewProps> = ({ syncDirectory, onOpenS
   const [showEditPocket, setShowEditPocket] = useState(false);
   const [showManagePockets, setShowManagePockets] = useState(false);
   const [showExpenseChart, setShowExpenseChart] = useState(false);
+  const [showPayBill, setShowPayBill] = useState(false);
+  const [showAddBill, setShowAddBill] = useState(false);
+  const [showEditBill, setShowEditBill] = useState(false);
+  const [showManageBills, setShowManageBills] = useState(false);
   const [selectedPocket, setSelectedPocket] = useState<Pocket | null>(null);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [dateFilter, setDateFilter] = useState<'all' | 'week' | 'month' | 'year'>('all');
   const [typeFilter, setTypeFilter] = useState<'all' | 'income' | 'expense' | 'transfer'>('all');
@@ -456,6 +473,24 @@ export const FinanceView: React.FC<FinanceViewProps> = ({ syncDirectory, onOpenS
         )}
       </div>
 
+      {/* Bills Section */}
+      <BillCarousel
+        bills={bills}
+        billPayments={billPayments}
+        currentMonth={new Date().toISOString().slice(0, 7)} // "YYYY-MM"
+        isBalanceVisible={isBalanceVisible}
+        onPayBill={(bill) => {
+          setSelectedBill(bill);
+          setShowPayBill(true);
+        }}
+        onEditBill={(bill) => {
+          setSelectedBill(bill);
+          setShowEditBill(true);
+        }}
+        onAddBill={() => setShowAddBill(true)}
+        onManageBills={() => setShowManageBills(true)}
+      />
+
       {/* Recent Transactions */}
       <div className="transactions-section">
         <div className="transactions-header">
@@ -690,6 +725,51 @@ export const FinanceView: React.FC<FinanceViewProps> = ({ syncDirectory, onOpenS
         categories={categories}
         availableMonths={availableMonths}
         onLoadMonth={loadTransactionsByMonth}
+      />
+
+      {/* Pay Bill Modal */}
+      <PayBillModal
+        isOpen={showPayBill}
+        onClose={() => {
+          setShowPayBill(false);
+          setSelectedBill(null);
+        }}
+        onSubmit={async (pocketId, amount, date, description) => {
+          if (selectedBill) {
+            await payBill(selectedBill.id, pocketId, amount, date, description);
+          }
+        }}
+        bill={selectedBill}
+        pockets={pockets}
+      />
+
+      {/* Add Bill Dialog */}
+      <AddBillDialog
+        isOpen={showAddBill}
+        onClose={() => setShowAddBill(false)}
+        onSubmit={addBill}
+        categories={categories}
+      />
+
+      {/* Edit Bill Dialog */}
+      <EditBillDialog
+        isOpen={showEditBill}
+        onClose={() => {
+          setShowEditBill(false);
+          setSelectedBill(null);
+        }}
+        onSubmit={updateBill}
+        onDelete={deleteBill}
+        bill={selectedBill}
+        categories={categories}
+      />
+
+      {/* Manage Bills Dialog */}
+      <ManageBillsDialog
+        isOpen={showManageBills}
+        onClose={() => setShowManageBills(false)}
+        bills={bills}
+        onReorder={reorderBills}
       />
 
       {/* Filter Modal */}

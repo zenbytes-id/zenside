@@ -1985,3 +1985,503 @@
 .btn-view-chart:active {
   transform: translateY(0);
 }
+/* Bills Section */
+.bills-section {
+  margin-bottom: 24px;
+}
+
+.bills-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 8px;
+}
+
+.bills-section h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #e4e4e4;
+  text-transform: none;
+}
+
+.bills-header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Bill Carousel */
+.bill-carousel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.carousel-content {
+  flex: 1;
+  overflow: hidden;
+}
+
+.carousel-btn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #2d3139;
+  color: #858585;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-btn:hover {
+  background: #3d4149;
+  color: #e4e4e4;
+}
+
+.carousel-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.carousel-indicators .indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: none;
+  background: #2d3139;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s;
+}
+
+.carousel-indicators .indicator.active {
+  background: #00d4ff;
+  width: 20px;
+  border-radius: 3px;
+}
+
+/* Bill Card */
+.bill-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  background: #1e2127;
+  border: 1px solid #2d3139;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.bill-card:hover {
+  background: #22262e;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.bill-card.paid {
+  opacity: 0.7;
+}
+
+.bill-card.paid:hover {
+  opacity: 0.85;
+}
+
+.bill-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.bill-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+  line-height: 1;
+  width: 24px;
+}
+
+.bill-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bill-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e4e4e4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bill-amount {
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bill-status {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 6px;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  z-index: 1;
+}
+
+.bill-status.paid {
+  color: #00d4ff;
+  background: rgba(0, 212, 255, 0.15);
+}
+
+.bill-status.overdue {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.15);
+  font-weight: 600;
+}
+
+.bill-status.today {
+  color: #ffeb3b;
+  background: rgba(255, 235, 59, 0.15);
+  font-weight: 600;
+}
+
+.bill-status.upcoming {
+  color: #ff9999;
+  background: rgba(255, 153, 153, 0.15);
+}
+
+.bill-status.pending {
+  color: #858585;
+  background: rgba(133, 133, 133, 0.15);
+}
+
+.btn-pay-bill {
+  width: 100%;
+  padding: 6px 12px;
+  background: #00d4ff;
+  color: #0a0c10;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-pay-bill:hover {
+  background: #00bfea;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 212, 255, 0.3);
+}
+
+.btn-pay-bill:active {
+  transform: translateY(0);
+}
+
+/* Bill Preview in Dialog */
+.bill-preview {
+  margin-top: 8px;
+}
+
+.bill-card.preview {
+  pointer-events: none;
+  background: #22262e;
+  border-color: #3d4149;
+}
+
+/* Empty State for Bills */
+.bills-section .empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  background: #1e2127;
+  border: 1px dashed #2d3139;
+  border-radius: 12px;
+  color: #858585;
+}
+
+.bills-section .empty-state p {
+  margin: 0 0 16px 0;
+}
+
+.btn-add-first {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #00d4ff;
+  color: #0a0c10;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-add-first:hover {
+  background: #00bfea;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 212, 255, 0.3);
+}
+
+/* Manage Bills Dialog */
+.manage-dialog {
+  max-width: 500px;
+}
+
+.manage-hint {
+  margin: 0 0 16px 0;
+  color: #858585;
+  font-size: 13px;
+}
+
+.manage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.manage-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #1e2127;
+  border: 1px solid #2d3139;
+  border-radius: 8px;
+  cursor: grab;
+  transition: all 0.2s;
+}
+
+.manage-item:hover {
+  background: #22262e;
+  border-color: #3d4149;
+}
+
+.manage-item.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.manage-item.drag-over {
+  border-color: #00d4ff;
+  background: #00d4ff11;
+}
+
+.drag-handle {
+  color: #858585;
+  cursor: grab;
+  flex-shrink: 0;
+}
+
+.manage-item:hover .drag-handle {
+  color: #e4e4e4;
+}
+
+.item-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e4e4e4;
+  margin-bottom: 2px;
+}
+
+.item-meta {
+  font-size: 12px;
+  color: #858585;
+}
+
+/* Form actions with split layout */
+.form-actions-right {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-danger {
+  padding: 10px 20px;
+  background: #ff6b6b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-danger:hover {
+  background: #ff5252;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+}
+
+.btn-danger:active {
+  transform: translateY(0);
+}
+
+/* Scrollbar for manage bills list */
+.manage-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.manage-list::-webkit-scrollbar-track {
+  background: #1a1d23;
+  border-radius: 3px;
+}
+
+.manage-list::-webkit-scrollbar-thumb {
+  background: #2d3139;
+  border-radius: 3px;
+}
+
+.manage-list::-webkit-scrollbar-thumb:hover {
+  background: #3d4149;
+}
+
+/* Scrollbar for modal body (for long forms) */
+.modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: #1a1d23;
+  border-radius: 3px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: #2d3139;
+  border-radius: 3px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: #3d4149;
+}
+
+/* Empty State Inline for Bills */
+.empty-state-inline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: #1e2127;
+  border: 1px dashed #2d3139;
+  border-radius: 8px;
+}
+
+.empty-text {
+  font-size: 14px;
+  color: #858585;
+}
+
+.btn-add-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #00d4ff;
+  color: #0a0c10;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-add-inline:hover {
+  background: #00bfea;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 212, 255, 0.3);
+}
+
+.btn-add-inline:active {
+  transform: translateY(0);
+}
+
+/* Bills Total Summary */
+.bills-total {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  margin-right: 12px;
+}
+
+.bills-total .total-label {
+  font-size: 12px;
+  color: #858585;
+  font-weight: 500;
+}
+
+.bills-total .total-amount {
+  font-size: 14px;
+  color: #ff9999;
+  font-weight: 700;
+}
+
+/* Bills List - Horizontal Scrollable (like pockets) */
+.bills-list {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 8px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bills-list::-webkit-scrollbar {
+  height: 6px;
+}
+
+.bills-list::-webkit-scrollbar-track {
+  background: #1a1d23;
+  border-radius: 3px;
+}
+
+.bills-list::-webkit-scrollbar-thumb {
+  background: #2d3139;
+  border-radius: 3px;
+}
+
+.bills-list::-webkit-scrollbar-thumb:hover {
+  background: #3d4149;
+}

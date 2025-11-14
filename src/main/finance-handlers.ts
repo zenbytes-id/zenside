@@ -1,6 +1,6 @@
 import { ipcMain, BrowserWindow } from 'electron';
 import { financeService } from '../services/finance';
-import { Transaction, Pocket, Category, FinanceSummary } from '../types/finance';
+import { Transaction, Pocket, Category, FinanceSummary, Bill, BillPayment, BillsData } from '../types/finance';
 
 /**
  * Register all finance-related IPC handlers
@@ -193,6 +193,140 @@ export function registerFinanceHandlers(): void {
       });
     } catch (error) {
       console.error('[Finance Handlers] Error saving categories:', error);
+      throw error;
+    }
+  });
+
+  // ========== BILL HANDLERS ==========
+
+  // Load bills
+  ipcMain.handle('finance:loadBills', async (): Promise<BillsData> => {
+    console.log('[Finance Handlers] finance:loadBills called');
+    try {
+      return await financeService.loadBills();
+    } catch (error) {
+      console.error('[Finance Handlers] Error loading bills:', error);
+      throw error;
+    }
+  });
+
+  // Add a bill
+  ipcMain.handle('finance:addBill', async (_, bill: Bill): Promise<void> => {
+    console.log('[Finance Handlers] finance:addBill called');
+    try {
+      await financeService.addBill(bill);
+
+      // Notify all windows about file change for git status update
+      BrowserWindow.getAllWindows().forEach(win => {
+        if (!win.isDestroyed()) {
+          win.webContents.send('fs:fileChanged', { type: 'note', action: 'change' });
+        }
+      });
+    } catch (error) {
+      console.error('[Finance Handlers] Error adding bill:', error);
+      throw error;
+    }
+  });
+
+  // Update a bill
+  ipcMain.handle('finance:updateBill', async (_, bill: Bill): Promise<void> => {
+    console.log('[Finance Handlers] finance:updateBill called');
+    try {
+      await financeService.updateBill(bill);
+
+      // Notify all windows about file change for git status update
+      BrowserWindow.getAllWindows().forEach(win => {
+        if (!win.isDestroyed()) {
+          win.webContents.send('fs:fileChanged', { type: 'note', action: 'change' });
+        }
+      });
+    } catch (error) {
+      console.error('[Finance Handlers] Error updating bill:', error);
+      throw error;
+    }
+  });
+
+  // Delete a bill
+  ipcMain.handle('finance:deleteBill', async (_, billId: string): Promise<void> => {
+    console.log('[Finance Handlers] finance:deleteBill called');
+    try {
+      await financeService.deleteBill(billId);
+
+      // Notify all windows about file change for git status update
+      BrowserWindow.getAllWindows().forEach(win => {
+        if (!win.isDestroyed()) {
+          win.webContents.send('fs:fileChanged', { type: 'note', action: 'change' });
+        }
+      });
+    } catch (error) {
+      console.error('[Finance Handlers] Error deleting bill:', error);
+      throw error;
+    }
+  });
+
+  // Reorder bills
+  ipcMain.handle('finance:reorderBills', async (_, bills: Bill[]): Promise<void> => {
+    console.log('[Finance Handlers] finance:reorderBills called');
+    try {
+      await financeService.reorderBills(bills);
+
+      // Notify all windows about file change for git status update
+      BrowserWindow.getAllWindows().forEach(win => {
+        if (!win.isDestroyed()) {
+          win.webContents.send('fs:fileChanged', { type: 'note', action: 'change' });
+        }
+      });
+    } catch (error) {
+      console.error('[Finance Handlers] Error reordering bills:', error);
+      throw error;
+    }
+  });
+
+  // Pay a bill
+  ipcMain.handle('finance:payBill', async (
+    _,
+    billId: string,
+    pocketId: string,
+    amount: number,
+    date: string,
+    description: string
+  ): Promise<{ transaction: Transaction; payment: BillPayment }> => {
+    console.log('[Finance Handlers] finance:payBill called');
+    try {
+      const result = await financeService.payBill(billId, pocketId, amount, date, description);
+
+      // Notify all windows about file change for git status update
+      BrowserWindow.getAllWindows().forEach(win => {
+        if (!win.isDestroyed()) {
+          win.webContents.send('fs:fileChanged', { type: 'note', action: 'change' });
+        }
+      });
+
+      return result;
+    } catch (error) {
+      console.error('[Finance Handlers] Error paying bill:', error);
+      throw error;
+    }
+  });
+
+  // Get bill payment status for a specific month
+  ipcMain.handle('finance:getBillPaymentStatus', async (_, billId: string, monthKey: string): Promise<BillPayment | null> => {
+    console.log('[Finance Handlers] finance:getBillPaymentStatus called');
+    try {
+      return await financeService.getBillPaymentStatus(billId, monthKey);
+    } catch (error) {
+      console.error('[Finance Handlers] Error getting bill payment status:', error);
+      throw error;
+    }
+  });
+
+  // Get bill payment history
+  ipcMain.handle('finance:getBillPaymentHistory', async (_, billId: string): Promise<BillPayment[]> => {
+    console.log('[Finance Handlers] finance:getBillPaymentHistory called');
+    try {
+      return await financeService.getBillPaymentHistory(billId);
+    } catch (error) {
+      console.error('[Finance Handlers] Error getting bill payment history:', error);
       throw error;
     }
   });
