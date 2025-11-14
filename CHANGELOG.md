@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2025-11-14
+
 ### Added
 - **Bills/Tagihan** - Monthly recurring payment tracking in ZenCash
 - Create bills with custom name, amount, category, and deadline date (1-31)
@@ -192,7 +194,8 @@ ZenSide is a dual-purpose macOS side panel application combining note-taking (Ze
 - Electron Forge for packaging and distribution
 - Code signing and notarization support for macOS
 
-[Unreleased]: https://github.com/zenbytes-id/zenside/compare/v1.0.4...HEAD
+[Unreleased]: https://github.com/zenbytes-id/zenside/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/zenbytes-id/zenside/compare/v1.0.4...v1.1.0
 [1.0.4]: https://github.com/zenbytes-id/zenside/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/zenbytes-id/zenside/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/zenbytes-id/zenside/compare/v1.0.1...v1.0.2
