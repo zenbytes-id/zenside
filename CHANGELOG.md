@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2025-11-16
+
 ### Fixed
 - Category dropdown in Add Transaction dialog now updates automatically when categories are modified in Settings
 - Category changes in Settings are now immediately reflected across all ZenCash components without requiring app restart
@@ -203,7 +205,8 @@ ZenSide is a dual-purpose macOS side panel application combining note-taking (Ze
 - Electron Forge for packaging and distribution
 - Code signing and notarization support for macOS
 
-[Unreleased]: https://github.com/zenbytes-id/zenside/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/zenbytes-id/zenside/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/zenbytes-id/zenside/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/zenbytes-id/zenside/compare/v1.0.4...v1.1.0
 [1.0.4]: https://github.com/zenbytes-id/zenside/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/zenbytes-id/zenside/compare/v1.0.2...v1.0.3
