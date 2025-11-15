@@ -41,6 +41,20 @@ export function useFinance() {
   }, []);
 
   /**
+   * Reload categories from filesystem
+   */
+  const reloadCategories = useCallback(async () => {
+    try {
+      const loadedCategories = await window.electronAPI?.finance.loadCategories() || [];
+      if (loadedCategories.length > 0) {
+        setCategories(loadedCategories);
+      }
+    } catch (error) {
+      console.error('Error reloading categories:', error);
+    }
+  }, []);
+
+  /**
    * Initialize finance data - load from filesystem
    */
   const initialize = useCallback(async (syncDirectory: string) => {
@@ -112,6 +126,22 @@ export function useFinance() {
       setIsLoading(false);
     }
   }, []);
+
+  /**
+   * Listen for category changes from CategoryManager
+   */
+  useEffect(() => {
+    const handleCategoryChange = () => {
+      console.log('[useFinance] Categories changed, reloading...');
+      reloadCategories();
+    };
+
+    window.addEventListener('finance:data-changed', handleCategoryChange);
+
+    return () => {
+      window.removeEventListener('finance:data-changed', handleCategoryChange);
+    };
+  }, [reloadCategories]);
 
   /**
    * Load transactions for a specific month (lazy loading)

@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron';
+import { ipcMain, BrowserWindow } from 'electron';
 import { gitService } from '../services/git';
 import { StatusResult, LogResult, DefaultLogFields } from 'simple-git';
 
@@ -46,6 +46,14 @@ export function registerGitHandlers(): void {
     console.log('[Git Handlers] git:init called');
     try {
       await gitService.init();
+
+      // Broadcast to all windows that git repo has been initialized
+      console.log('[Git Handlers] Broadcasting git:repo-initialized to all windows');
+      BrowserWindow.getAllWindows().forEach(win => {
+        if (!win.isDestroyed()) {
+          win.webContents.send('git:repo-initialized');
+        }
+      });
     } catch (error) {
       console.error('[Git Handlers] Error initializing repository:', error);
       throw error;

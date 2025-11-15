@@ -47,6 +47,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.on('open-search', () => callback());
   },
 
+  // Git repo initialized listener
+  onGitRepoInitialized: (callback) => {
+    ipcRenderer.on('git:repo-initialized', () => callback());
+  },
+
   // Git operations
   git: {
     initialize: (syncDirectory) => ipcRenderer.invoke('git:initialize', syncDirectory),

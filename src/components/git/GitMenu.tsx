@@ -147,9 +147,19 @@ export const GitMenu: React.FC<GitMenuProps> = ({
       await git.push();
 
       if (isPublishing) {
-        setShowToast({ message: 'Branch published successfully', type: 'success' });
         // Update remote branch status after publishing
         setHasRemoteBranch(true);
+
+        // Auto-enable auto-sync after successful first publish
+        console.log('[GitMenu] First publish successful - enabling auto-sync');
+        localStorage.setItem('git-auto-sync-enabled', 'true');
+
+        // Dispatch event to notify other components
+        window.dispatchEvent(new CustomEvent('git:auto-sync-changed', {
+          detail: { enabled: true, interval: parseInt(localStorage.getItem('git-auto-sync-interval') || '60', 10) }
+        }));
+
+        setShowToast({ message: 'Branch published! Auto-sync enabled', type: 'success' });
       } else {
         setShowToast({ message: 'Pushed successfully', type: 'success' });
       }
@@ -227,6 +237,11 @@ export const GitMenu: React.FC<GitMenuProps> = ({
     statusIcon = '○';
     statusClass = 'no-commits';
     statusText = 'No commits';
+  } else if (!hasRemoteBranch) {
+    // Has commits but not published to remote yet
+    statusIcon = '📤';
+    statusClass = 'unpublished';
+    statusText = 'Not published';
   } else if (autoSync.isSyncing) {
     statusIcon = <BiRefresh />;
     statusClass = 'syncing';

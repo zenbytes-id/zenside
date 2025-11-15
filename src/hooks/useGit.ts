@@ -62,10 +62,17 @@ export function useGit(syncDirectory: string | null) {
       recheckRepository();
     };
 
+    // Listen for both window events (same window) and IPC events (cross-window)
     window.addEventListener('git:repo-initialized', handleRepoInit);
+
+    // Also listen for IPC event from main process (for cross-window communication)
+    if (window.electronAPI?.onGitRepoInitialized) {
+      window.electronAPI.onGitRepoInitialized(handleRepoInit);
+    }
 
     return () => {
       window.removeEventListener('git:repo-initialized', handleRepoInit);
+      // Note: IPC listeners are persistent and don't need cleanup
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [syncDirectory]);
@@ -73,16 +80,18 @@ export function useGit(syncDirectory: string | null) {
   // Refresh git status (with optional force parameter to bypass isRepository check)
   const refreshStatus = useCallback(async (force: boolean = false) => {
     if (!window.electronAPI?.git) {
-      return;
+      return null;
     }
 
     try {
       const gitStatus = await window.electronAPI.git.status();
       setStatus(gitStatus);
       setError(null);
+      return gitStatus;
     } catch (err) {
       console.error('[useGit] Error refreshing status:', err);
       setError(err instanceof Error ? err.message : 'Failed to get status');
+      return null;
     }
   }, []);
 

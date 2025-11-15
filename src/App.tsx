@@ -284,6 +284,13 @@ const App: React.FC = () => {
   };
 
   const handleCreateFolder = () => {
+    // Check if sync directory is set
+    if (!syncState.directory) {
+      console.log('[APP] Cannot create folder - no sync directory set');
+      window.electronAPI?.openSettings();
+      return;
+    }
+
     const newFolder: Folder = {
       id: `folder-${Date.now()}`,
       name: '',  // Start with empty name
@@ -343,6 +350,13 @@ const App: React.FC = () => {
   };
 
   const handleCreateNote = async () => {
+    // Check if sync directory is set
+    if (!syncState.directory) {
+      console.log('[APP] Cannot create note - no sync directory set');
+      window.electronAPI?.openSettings();
+      return;
+    }
+
     // Find the highest order number in current folder (or all notes if no folder)
     const notesInFolder = notes.filter(n => n.folderId === selectedFolder?.id);
     const maxOrder = notesInFolder.length > 0

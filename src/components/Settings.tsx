@@ -42,6 +42,7 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
   const [editUrl, setEditUrl] = useState('');
   const [gitMessage, setGitMessage] = useState<{ text: string; type: 'success' | 'error' | 'info' } | null>(null);
   const [hasCommits, setHasCommits] = useState(false);
+  const [hasRemoteBranch, setHasRemoteBranch] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
   const [showSSHHelp, setShowSSHHelp] = useState(false);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
@@ -51,7 +52,39 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
       loadSyncStatus();
       loadAutoSyncSettings();
       loadPanelSettings();
+
+      // Also refresh git status when opening settings to get latest hasRemoteBranch state
+      if (git.isRepository) {
+        const refreshGitState = async () => {
+          console.log('[Settings] Refreshing git state on open...');
+          const status = await git.refreshStatus();
+          const hasTracking = !!status?.tracking;
+          console.log('[Settings] After refresh - hasTracking:', hasTracking, 'status:', status);
+          setHasRemoteBranch(hasTracking);
+        };
+        refreshGitState();
+      }
     }
+
+    // Listen for auto-sync changes (e.g., when auto-enabled after publish)
+    const handleAutoSyncChange = (event: CustomEvent) => {
+      const { enabled } = event.detail;
+      console.log('[Settings] Auto-sync changed:', enabled);
+      setAutoSyncEnabled(enabled);
+
+      // If auto-sync was just enabled, it means we published - update hasRemoteBranch
+      if (enabled && git.isRepository) {
+        console.log('[Settings] Auto-sync enabled after publish - setting hasRemoteBranch to true');
+        setHasRemoteBranch(true);
+      }
+    };
+
+    window.addEventListener('git:auto-sync-changed' as any, handleAutoSyncChange);
+
+    return () => {
+      window.removeEventListener('git:auto-sync-changed' as any, handleAutoSyncChange);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   // Load git data when repository becomes available
@@ -59,6 +92,7 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
     const loadGitData = async () => {
       if (git.isRepository) {
         await git.refreshRemotes();
+        const status = await git.refreshStatus();
 
         // Check if there are any commits
         try {
@@ -67,10 +101,16 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
         } catch (error) {
           setHasCommits(false);
         }
+
+        // Check if the current branch exists on remote (published)
+        const hasTracking = !!status?.tracking;
+        console.log('[Settings] loadGitData - hasTracking:', hasTracking, 'status:', status);
+        setHasRemoteBranch(hasTracking);
       }
     };
     loadGitData();
-  }, [git.isRepository]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [git.isRepository]); // Only run when repository status changes, not on every status update
 
   // Load existing remote URL
   useEffect(() => {
@@ -615,6 +655,11 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
                     <p className="settings-info">
                       Automatically commit and push your changes to a remote Git repository at regular intervals.
                     </p>
+                    {!hasRemoteBranch && git.remotes.length > 0 && (
+                      <div className="settings-info-box">
+                        <p>💡 Auto-sync will be enabled automatically after you publish your first commit to the remote repository.</p>
+                      </div>
+                    )}
 
                     <div className="auto-sync-controls">
                       <label className="auto-sync-toggle">
@@ -622,8 +667,12 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
                           type="checkbox"
                           checked={autoSyncEnabled}
                           onChange={(e) => handleToggleAutoSync(e.target.checked)}
+                          disabled={!hasRemoteBranch}
                         />
-                        <span className="toggle-label">Enable Auto-Sync</span>
+                        <span className="toggle-label">
+                          Enable Auto-Sync
+                          {!hasRemoteBranch && <span className="toggle-hint"> (publish repository first)</span>}
+                        </span>
                       </label>
 
                       {autoSyncEnabled && (

@@ -67,6 +67,7 @@ declare global {
     onSyncDirectoryCleared: (callback: () => void) => void;
     onSyncDirectoryChanged: (callback: (data: { directory: string }) => void) => void;
     onOpenSearch: (callback: () => void) => void;
+    onGitRepoInitialized: (callback: () => void) => void;
     git: {
       initialize: (syncDirectory: string) => Promise<void>;
       isRepository: () => Promise<boolean>;

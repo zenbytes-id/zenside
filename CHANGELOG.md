@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Category dropdown in Add Transaction dialog now updates automatically when categories are modified in Settings
+- Category changes in Settings are now immediately reflected across all ZenCash components without requiring app restart
+- Git menu now appears immediately after initial Git setup without requiring app restart
+- Auto-sync toggle in Settings now properly enables after publishing repository to remote
+- Git status correctly shows "Not published" when repository has commits but hasn't been pushed to remote yet
+- Settings window now properly detects published repository status when opened after first push
+- First-install protection prevents creating notes/folders before sync directory is selected
+
 ## [1.1.0] - 2025-11-14
 
 ### Added
